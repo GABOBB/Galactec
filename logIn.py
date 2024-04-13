@@ -11,7 +11,6 @@ class login_wndw(tk.Tk):
         super().__init__()
         self.title("Log In")
         self.geometry('250x300')
-        self.title('Log In')
         self.resizable(width=NO,height=NO)
         
         self.wndw_back = wndw
