@@ -8,12 +8,15 @@ import os
 class Menu_wndw(tk.Tk):
 
     def __init__(self):
+        
         super().__init__()
         self.title('GalaTec')
         self.geometry('711x400')
         self.resizable(width=NO,height=NO)
         self.wm_attributes('-topmost',1)
-
+        
+        
+        
         self.canvas = tk.Canvas(self, bg="black", width=711, height=400)
         self.canvas.pack()
         
@@ -42,11 +45,12 @@ class Menu_wndw(tk.Tk):
     
   
     def S_ln(self):
-        self.destroy()
-        LGIN.login_wndw()
+        self.withdraw()
+        LGIN.login_wndw(self)
     
     def MP_ln(self):
         pass
+    
     
 Menu_wndw()
 

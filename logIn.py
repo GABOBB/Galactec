@@ -7,12 +7,14 @@ import os
 
 class login_wndw(tk.Tk):
     
-    def __init__(self):
+    def __init__(self, wndw):
         super().__init__()
         self.title("Log In")
         self.geometry('250x300')
         self.title('Log In')
         self.resizable(width=NO,height=NO)
+        
+        self.wndw_back = wndw
         
         self.canvas = tk.Canvas(self, bg="black", width=250, height=300)
         self.canvas.pack()
@@ -29,7 +31,7 @@ class login_wndw(tk.Tk):
         PwrdE=Entry(self.canvas,bg='black',fg='green2')
         PwrdE.place(x=10,y=180)
 
-        LoginB = Button(self.canvas, text= 'LogIn',bg='green1',fg='black',command=lambda: self.try_logIn())
+        LoginB = Button(self.canvas, text= 'LogIn',bg='green1',fg='black',command=lambda: self.try_logIn(UserE.get(),PwrdE.get()))
         LoginB.place(x=20,y=240)
         
         cancel = Button(self.canvas,text='Exit',bg='green1',command=lambda: self.exit())
@@ -41,10 +43,12 @@ class login_wndw(tk.Tk):
         self.mainloop()
         
     def exit(self):
+        self.destroy()
+        self.wndw_back.deiconify()
         print('exit')
         
-    def try_logIn(self):
-        print('Log In')
+    def try_logIn(self,U,P):
+        print('Log In' + ' -> ' + U + ',' +  P)
     
     def Sing_Up(self):
         print('sing_Up')
