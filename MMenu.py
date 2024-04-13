@@ -48,8 +48,11 @@ class Menu_wndw(tk.Tk):
   
     def S_ln(self):
         self.withdraw()
-        LGIN.login_wndw(self)
-    
+        x = LGIN.login_wndw(self)
+        if(x):
+            print('si sale true')
+        else:
+            print('no se si llega None')
     def MP_ln(self):
         self.withdraw()
         LGIN.login_wndw(self)
@@ -62,6 +65,6 @@ class Menu_wndw(tk.Tk):
     def PD(self):
         self.withdraw()
         PD.Podio_wndw(self)
-    
+
 Menu_wndw()
 

@@ -47,7 +47,10 @@ class login_wndw(tk.Tk):
         print('exit')
         
     def try_logIn(self,U,P):
+        self.destroy(  )
         print('Log In' + ' -> ' + U + ',' +  P)
+        self.wndw_back.deiconify()
+        
     
     def Sing_Up(self):
         print('sing_Up')
