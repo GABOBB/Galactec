@@ -6,6 +6,14 @@ class User():
         self.F = foto
         self.n = nave
         self.M = musica
+    
+    def __init__(self):
+        self.N = None
+        self.U = None
+        self.C = None
+        self.F = None
+        self.n = None
+        self.M = None
         
     def get_NMBR(self):
         return self.N

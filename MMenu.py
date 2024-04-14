@@ -19,10 +19,8 @@ class Menu_wndw(tk.Tk):
         
         
         self.user1 = None
-        self.canvas_user1 = None
         self.user2 = None
-        self.canvas_user2 = None
-        
+                
         
         self.canvas = tk.Canvas(self, bg="black", width=711, height=400,bd=0, highlightthickness=0)
         self.canvas.pack()
@@ -53,6 +51,7 @@ class Menu_wndw(tk.Tk):
     
   
     def S_ln(self):
+        self.user1 = None
         self.withdraw()
         x = LGIN.login_wndw(self)
         if(x):
@@ -61,6 +60,7 @@ class Menu_wndw(tk.Tk):
             print('no se si llega None')
     
     def MP_ln(self):
+        self.user2 = None
         self.withdraw()
         LGIN.login_wndw(self)
     
@@ -72,21 +72,28 @@ class Menu_wndw(tk.Tk):
         self.withdraw()
         PD.Podio_wndw(self)
 
-    def confirmed(self):#, User):
-        #self.user = User
-        self.canvas_user1 = tk.Canvas(self, bg="black", width=300, height=400,bd=0, highlightthickness=0)
-        self.canvas_user1.place(x=450,y=0)
+    def confirmed(self, User):
+        if(self.user1== None):
+            X = 250
+            self.user1 = User
+        else:
+            X = 450
+            self.user2 = User
+
         
-        UserL = Label(self.canvas_user1, text='User.get_USR()',bg='black',fg='green1')
+        canvas_user = tk.Canvas(self, bg="black", width=250, height=250,bd=0, highlightthickness=0)
+        canvas_user.place(x=X,y=0)
+        
+        UserL = Label(canvas_user, text='User.get_USR()',bg='black',fg='green1')
         UserL.place(x=60,y=140)
         
-        NameL = Label(self.canvas_user1, text='User.get_NMBR()',bg='black',fg='green1')
+        NameL = Label(canvas_user, text='User.get_NMBR()',bg='black',fg='green1')
         NameL.place(x=60,y=170)
         
-        MailL = Label(self.canvas_user1, text='User.get_CRR()',bg='black',fg='green1')
+        MailL = Label(canvas_user, text='User.get_CRR()',bg='black',fg='green1')
         MailL.place(x=60,y=200) 
         
-        Begin_Game_B = Button(self.canvas_user1, text='Start game',fg='black',bg='green1',command=print("hola"),bd=0)
+        Begin_Game_B = Button(canvas_user, text='Start game',fg='black',bg='green1',command=print("hola"),bd=0)
         Begin_Game_B.place(x=60,y=230)
         
         self.SecndP_B.config(state=tk.NORMAL)

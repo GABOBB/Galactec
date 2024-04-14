@@ -1,4 +1,5 @@
 from tkinter import *
+import User_Profile as UP
 import tkinter as tk
 import pygame
 import sys
@@ -50,7 +51,8 @@ class login_wndw(tk.Tk):
         self.destroy(  )
         print('Log In' + ' -> ' + U + ',' +  P)
         self.wndw_back.deiconify()
-        self.wndw_back.confirmed()
+        U = UP.User()
+        self.wndw_back.confirmed(U)
         
     
     def Sing_Up(self):
