@@ -52,6 +52,6 @@ def Game():
     sys.exit()
 
 
-Game()
+#Game()
 
 

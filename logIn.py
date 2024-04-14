@@ -50,6 +50,7 @@ class login_wndw(tk.Tk):
         self.destroy(  )
         print('Log In' + ' -> ' + U + ',' +  P)
         self.wndw_back.deiconify()
+        self.wndw_back.confirmed()
         
     
     def Sing_Up(self):
