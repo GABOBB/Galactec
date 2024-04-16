@@ -1,3 +1,5 @@
+import os
+
 class User():
     def __init__(self,Nombre,Usuario,correo,foto,nave,musica):
         self.N = Nombre
@@ -8,10 +10,10 @@ class User():
         self.M = musica
     
     def __init__(self):
-        self.N = None
-        self.U = None
-        self.C = None
-        self.F = None
+        self.N = 'Nombre'
+        self.U = 'Usuario'
+        self.C = 'Correo@gmail.com'
+        self.F = None #os.path.join('Auxiliares','defecto.jpg')
         self.n = None
         self.M = None
         
@@ -30,7 +32,7 @@ class User():
     def set_CRR(self,crr):
         self.C = crr
 
-    def get_Ft(self):
+    def get_FT(self):
         return self.F
     def set_FT(self,F):
         self.F = F
