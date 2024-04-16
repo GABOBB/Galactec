@@ -1,6 +1,7 @@
 from tkinter import *
 import User_Profile as UP
 import tkinter as tk
+import JsonManager as JM 
 import pygame
 import sys
 import os
@@ -13,6 +14,8 @@ class login_wndw(tk.Tk):
         self.title("Log In")
         self.geometry('250x300')
         self.resizable(width=NO,height=NO)
+        
+        
         
         self.wndw_back = wndw
         
@@ -58,4 +61,11 @@ class login_wndw(tk.Tk):
     def Sing_Up(self):
         print('sing_Up')
 
+
 #login_wndw()
+class Verify_credencials():
+    def __init__(self):
+        pass
+    
+    def verify():
+        pass
