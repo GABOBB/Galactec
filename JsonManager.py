@@ -1,4 +1,6 @@
 import json
+import User_Profile as UP
+from User_Profile import User
 
 class JSONManager:
     def __init__(self, archivo):
@@ -22,3 +24,8 @@ class JSONManager:
         except Exception as e:
             print("Error al cargar la lista de objetos:", str(e))
             return []
+
+
+p = JSONManager('usuarios.json').cargar_lista(User)
+for i in p:
+    print(i.get_PSSWRD())

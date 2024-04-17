@@ -1,14 +1,26 @@
 import os
 
 class User():
-    def __init__(self,Nombre,Usuario,correo,foto,nave,musica):
-        self.N = Nombre
-        self.U = Usuario
-        self.C = correo
-        self.F = foto
-        self.n = nave
-        self.M = musica
-    
+    '''def __init__(self, N, P):
+        self.N = N
+        self.P = P
+        
+    def __init__(self,N,U,P,C,F,n,M):
+        self.N = N
+        self.U = U
+        self.C = C
+        self.F = F
+        self.n = n
+        self.M = M
+        self.P = P
+        
+    def __init__(self, nombre, user, mail, psswrd):
+        self.N = nombre
+        self.U = user
+        self.C = mail
+        self.P = psswrd'''
+        
+                
     def __init__(self):
         self.N = 'Nombre'
         self.U = 'Usuario'
@@ -21,6 +33,11 @@ class User():
         return self.N
     def set_NMBR(self,N):
         self.N = N
+        
+    def get_PSSWRD(self):
+        return self.P
+    def set_PSSWRD(self,P):
+        self.P = P
         
     def get_USR(self):
         return self.U

@@ -53,7 +53,10 @@ class Menu_wndw(tk.Tk):
     
   
     def S_ln(self):
-        self.user1 = None
+        if self.user1 != None:
+            self.user1 = None
+            self.C_U1.destroy()
+        
         self.withdraw()
         x = LGIN.login_wndw(self)
         if(x):
