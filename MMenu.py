@@ -6,6 +6,7 @@ import logIn as LGIN
 import Podio as PD
 import sys
 import os
+import Game
 
 
 class Menu_wndw(tk.Tk):
@@ -110,7 +111,11 @@ class Menu_wndw(tk.Tk):
         else:
             self.user2 = None
             self.C_U2 = None'''
-            
+    
+    def play(self):
+        self.destroy()
+        Game.Game()
+    
     def confirmed(self, User):
         
         canvas_user = tk.Canvas(self, bg="Black", width=250, height=300,bd=0, highlightthickness=0)
@@ -118,7 +123,7 @@ class Menu_wndw(tk.Tk):
             X = 250
             self.C_U1 = canvas_user
             self.user1 = User
-            Start_Game_B = Button(canvas_user, text='Start',bg='Green1',fg='black')#,command=lambda: self.C_U2.destroy())
+            Start_Game_B = Button(canvas_user, text='Start',bg='Green1',fg='black', command=lambda: self.play())
             Start_Game_B.place(x=60,y=260)
         else:
             X = 450
