@@ -25,7 +25,3 @@ class JSONManager:
             print("Error al cargar la lista de objetos:", str(e))
             return []
 
-
-p = JSONManager('usuarios.json').cargar_lista(User)
-for i in p:
-    print(i.get_PSSWRD())

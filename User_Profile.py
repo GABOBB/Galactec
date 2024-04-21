@@ -3,7 +3,7 @@ import os
 class User():
     '''def __init__(self, N, P):
         self.N = N
-        self.P = P
+        self.P = P'''
         
     def __init__(self,N,U,P,C,F,n,M):
         self.N = N
@@ -14,11 +14,11 @@ class User():
         self.M = M
         self.P = P
         
-    def __init__(self, nombre, user, mail, psswrd):
+    '''def __init__(self, nombre, user, mail, psswrd):
         self.N = nombre
         self.U = user
         self.C = mail
-        self.P = psswrd'''
+        self.P = psswrd
         
                 
     def __init__(self):
@@ -27,7 +27,7 @@ class User():
         self.C = 'Correo@gmail.com'
         self.F = None #os.path.join('Auxiliares','defecto.jpg')
         self.n = None
-        self.M = None
+        self.M = None'''
         
     def get_NMBR(self):
         return self.N

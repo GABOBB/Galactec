@@ -44,6 +44,7 @@ class Menu_wndw(tk.Tk):
         self.ExitGm_B = Button(self.canvas, text='Exit Game', bg = 'green1', fg= 'black', command=lambda: self.destroy())
         self.ExitGm_B.place(x=20,y=340)
 
+        
         self.mainloop()
         
         
@@ -113,7 +114,7 @@ class Menu_wndw(tk.Tk):
             self.C_U2 = None'''
     
     def play(self):
-        self.destroy()
+        self.withdraw()
         Game.Game()
     
     def confirmed(self, User):
@@ -126,7 +127,7 @@ class Menu_wndw(tk.Tk):
             Start_Game_B = Button(canvas_user, text='Start',bg='Green1',fg='black', command=lambda: self.play())
             Start_Game_B.place(x=60,y=260)
         else:
-            X = 450
+            X = 450 
             self.C_U2 = canvas_user
             self.user2 = User
             print(self.C_U2 == None)

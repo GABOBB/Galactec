@@ -1,4 +1,5 @@
 from tkinter import *
+from User_Profile import User
 import User_Profile as UP
 import tkinter as tk
 import JsonManager as JM 
@@ -22,6 +23,9 @@ class login_wndw(tk.Tk):
         self.canvas = tk.Canvas(self, bg="black", width=250, height=300)
         self.canvas.pack()
         
+        self.MSSG = Label(self.canvas,text="",bg='Black',fg='red')
+        self.MSSG.place(x=15,y=10)
+        
         UserL=Label(self.canvas, text='Username:',bg='green2',fg='Black')
         UserL.place(x=15,y=50)
 
@@ -43,6 +47,8 @@ class login_wndw(tk.Tk):
         Rgstr = Button(self.canvas, text='Dont have an account yet?',bg='black',fg='green1',bd=0, command=lambda: self.Sing_Up())
         Rgstr.place(x=10,y=200)
         
+        self.protocol("WM_DELETE_WINDOW", self.exit)
+        
         self.mainloop()
         
     def exit(self):
@@ -51,21 +57,47 @@ class login_wndw(tk.Tk):
         print('exit')
         
     def try_logIn(self,U,P):
-        self.destroy(  )
-        print('Log In' + ' -> ' + U + ',' +  P)
-        self.wndw_back.deiconify()
-        U = UP.User()
-        self.wndw_back.confirmed(U)
         
-    
+        U = U.strip()
+        P = P.strip()
+        if(len(U)>>0 and len(P)>>0):  
+            J = Verify_credencials(U,P)
+            if(J.U_IN != None):
+                self.destroy()
+                self.wndw_back.confirmed(J.U_IN)
+                self.wndw_back.deiconify()
+            else:
+                self.MSSG.config(text="Usuario o contraseña incorrecta")
+                self.canvas.update()         
+        elif(len(U)<=0 or len(P)<=0):
+            self.MSSG.config(text="Credenciales incompletas")
+            self.canvas.update()
+            
+            
     def Sing_Up(self):
         print('sing_Up')
 
 
-#login_wndw()
+
 class Verify_credencials():
-    def __init__(self):
-        pass
-    
-    def verify():
-        pass
+    def __init__(self,User,Psswdr):
+        self.List_user = None
+        self.U_IN = None
+        self.L_U = self.load_users()
+        self.verify(User,Psswdr)
+        
+    def load_users(self):
+        L = JM.JSONManager('usuarios.json').cargar_lista(User)
+        for l in L:
+            print(l.get_NMBR())
+        return L
+        
+    def verify(self, User, Psswdr):
+        for U in self.L_U:
+            print(U.get_NMBR() + '-----' + User +";"+U.get_PSSWRD()+'-----'+ Psswdr)
+            if(U.get_NMBR() == User and U.get_PSSWRD() == Psswdr):
+                self.U_IN = U
+                return 0
+            else:
+                self.U_IN = None
+                

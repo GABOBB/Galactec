@@ -65,4 +65,4 @@ def Game():
     # Finaliza pygame
     pygame.quit()
 
-Game()
+#Game()
