@@ -2,7 +2,8 @@ from tkinter import *
 from User_Profile import User
 import User_Profile as UP
 import tkinter as tk
-import JsonManager as JM 
+import JsonManager as JM
+import singUp as SU
 import pygame
 import sys
 import os
@@ -75,9 +76,8 @@ class login_wndw(tk.Tk):
             
             
     def Sing_Up(self):
-        print('sing_Up')
-
-
+        self.withdraw()
+        SU.singup_wndw(self)
 
 class Verify_credencials():
     def __init__(self,User,Psswdr):
