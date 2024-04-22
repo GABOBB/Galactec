@@ -2,7 +2,8 @@ from tkinter import *
 from User_Profile import User
 import User_Profile as UP
 import tkinter as tk
-import JsonManager as JM 
+import JsonManager as JM
+import v_ayuda as VA
 import pygame
 import sys
 import os
@@ -15,9 +16,7 @@ class login_wndw(tk.Tk):
         self.title("Log In")
         self.geometry('250x300')
         self.resizable(width=NO,height=NO)
-        
-        
-        
+
         self.wndw_back = wndw
         
         self.canvas = tk.Canvas(self, bg="black", width=250, height=300)
@@ -46,6 +45,9 @@ class login_wndw(tk.Tk):
         
         Rgstr = Button(self.canvas, text='Dont have an account yet?',bg='black',fg='green1',bd=0, command=lambda: self.Sing_Up())
         Rgstr.place(x=10,y=200)
+
+        self.HELP_B = Button(self.canvas, text='HELP', bg='green1', fg='black', command=lambda: VA.v_help(self))
+        self.HELP_B.place(x=200, y=20)
         
         self.protocol("WM_DELETE_WINDOW", self.exit)
         
@@ -72,8 +74,7 @@ class login_wndw(tk.Tk):
         elif(len(U)<=0 or len(P)<=0):
             self.MSSG.config(text="Credenciales incompletas")
             self.canvas.update()
-            
-            
+
     def Sing_Up(self):
         print('sing_Up')
 
@@ -100,4 +101,4 @@ class Verify_credencials():
                 return 0
             else:
                 self.U_IN = None
-                
+

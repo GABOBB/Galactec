@@ -1,5 +1,6 @@
 from tkinter import *
 import tkinter as tk
+import v_ayuda as VA
 import pygame
 import sys
 import os
@@ -13,7 +14,7 @@ class Stngs_wndw(tk.Tk):
         image_fondo = PhotoImage(file="Imagenes/Auxiliares/setting_image.png")
 
         self.wndw_back = wndw
-        self.canvas = tk.Canvas(self,bg= "black",width=750, height=500,bd=0,)
+        self.canvas = tk.Canvas(self,bg= "black" ,width=750, height=500,bd=0,)
 
         self.canvas.pack()
 
@@ -44,10 +45,20 @@ class Stngs_wndw(tk.Tk):
         Patron_E.place(x=450, y=400)
 
         #Botones niveles
-        #Nivel1_boton = Button(self.canvas, text="Nivel1", bg='green1',fg='black', command=lambda: self.exit())
-        #Nivel1_boton.place(x=500, y=500)
+        Nivel1_boton = Button(self.canvas, text="Nivel1", bg='blue',fg='white', command=lambda: self.exit())
+        Nivel1_boton.place(x=650, y=100)
 
+        Nivel2_boton = Button(self.canvas, text="Nivel2", bg='blue', fg='white', command=lambda: self.exit())
+        Nivel2_boton.place(x=650, y=200)
 
+        Nivel3_boton = Button(self.canvas, text="Nivel3", bg='blue', fg='white', command=lambda: self.exit())
+        Nivel3_boton.place(x=650, y=300)
+
+        Exit_B = Button(self.canvas, text='exit',bg='green1', fg='white', command=lambda: self.exit())
+        Exit_B.place(x=650, y=400)
+
+        self.HELP_B = Button(self.canvas, text='HELP', bg='green1', fg='black', command=lambda: VA.v_help(self))
+        self.HELP_B.place(x= 20, y=20)
         self.mainloop()
 
     def exit(self):

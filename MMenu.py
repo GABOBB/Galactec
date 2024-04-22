@@ -4,6 +4,7 @@ from tkinter import *
 import Setings as Stngs
 import logIn as LGIN
 import Podio as PD
+import v_ayuda as VA
 import sys
 import os
 import Game
@@ -44,7 +45,9 @@ class Menu_wndw(tk.Tk):
         self.ExitGm_B = Button(self.canvas, text='Exit Game', bg = 'green1', fg= 'black', command=lambda: self.destroy())
         self.ExitGm_B.place(x=20,y=340)
 
-        
+        self.HELP_B = Button(self.canvas, text='HELP', bg='green1', fg='black', command=lambda: self.VA())
+        self.HELP_B.place(x=650, y=20)
+
         self.mainloop()
         
         
@@ -74,6 +77,10 @@ class Menu_wndw(tk.Tk):
     def STNGS(self):
         self.withdraw()
         Stngs.Stngs_wndw(self)
+
+    def VA(self):
+        self.withdraw()
+        VA.v_help(self)
         
     def PD(self):
         self.withdraw()
@@ -153,7 +160,9 @@ class Menu_wndw(tk.Tk):
          
         self.SecndP_B.config(state=tk.NORMAL)
         print('se confirmaron las credenciales')
-        
+
+
+
         
         
 Menu_wndw()
