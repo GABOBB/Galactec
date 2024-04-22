@@ -76,9 +76,8 @@ class login_wndw(tk.Tk):
             self.canvas.update()
 
     def Sing_Up(self):
-        print('sing_Up')
-
-
+        self.withdraw()
+        SU.singup_wndw(self)
 
 class Verify_credencials():
     def __init__(self,User,Psswdr):
