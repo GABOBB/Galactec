@@ -3,6 +3,7 @@ from User_Profile import User
 import User_Profile as UP
 import tkinter as tk
 import JsonManager as JM
+import singUp as SU
 import v_ayuda as VA
 import pygame
 import sys

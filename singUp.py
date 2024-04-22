@@ -78,6 +78,10 @@ class singup_wndw(tk.Tk):
                 self.destroy()
                 self.wndw_back.deiconify()
 
+            else:
+                self.MSSG.config(text="Correo inválido")
+                self.canvas.update()
+
         else:
             self.MSSG.config(text="Credenciales incompletas")
             self.canvas.update()
