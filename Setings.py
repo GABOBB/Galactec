@@ -59,9 +59,10 @@ class Stngs_wndw(tk.Tk):
 
         self.HELP_B = Button(self.canvas, text='HELP', bg='green1', fg='black', command=lambda: VA.v_help(self))
         self.HELP_B.place(x= 20, y=20)
+        
+        self.protocol("WM_DELETE_WINDOW", self.exit)
         self.mainloop()
 
     def exit(self):
         self.destroy()
         self.wndw_back.deiconify()
-        print('exit')

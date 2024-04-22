@@ -16,6 +16,8 @@ class Podio_wndw(tk.Tk):
         Exit_B = Button(self,text='exit',command=lambda: self.exit())
         Exit_B.pack()
         
+        self.protocol("WM_DELETE_WINDOW", self.exit)
+        
         self.mainloop()
 
     def exit(self):
