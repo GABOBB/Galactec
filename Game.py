@@ -220,4 +220,4 @@ def Game():
         
     pygame.quit()
 
-Game()
+#Game()

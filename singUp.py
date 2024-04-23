@@ -76,6 +76,13 @@ class singup_wndw(tk.Tk):
         if len(email) >> 0 and len(user) >> 0 and len(real_name) >> 0 and len(password) >> 0:
             if correo_manager.verificar_correo(email):
                 self.destroy()
+                U = UP.User(real_name, user, password, email, None, None, None)
+                jm = JM.JSONManager('usuarios.json')
+                L = jm.cargar_lista(User)
+                print(len(L))
+                L += [U]
+                print(len(L))
+                jm.guardar_lista(L) 
                 self.wndw_back.deiconify()
 
             else:

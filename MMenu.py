@@ -161,9 +161,5 @@ class Menu_wndw(tk.Tk):
         self.SecndP_B.config(state=tk.NORMAL)
         print('se confirmaron las credenciales')
 
-
-
-        
-        
 Menu_wndw()
 
