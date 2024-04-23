@@ -5,6 +5,7 @@ import tkinter as tk
 import JsonManager as JM
 import singUp as SU
 import v_ayuda as VA
+import PasswordManager as PM
 import pygame
 import sys
 import os
@@ -15,12 +16,12 @@ class login_wndw(tk.Tk):
     def __init__(self, wndw):
         super().__init__()
         self.title("Log In")
-        self.geometry('250x300')
+        self.geometry('250x320')
         self.resizable(width=NO,height=NO)
 
         self.wndw_back = wndw
         
-        self.canvas = tk.Canvas(self, bg="black", width=250, height=300)
+        self.canvas = tk.Canvas(self, bg="black", width=250, height=320)
         self.canvas.pack()
         
         self.MSSG = Label(self.canvas,text="",bg='Black',fg='red')
@@ -44,8 +45,11 @@ class login_wndw(tk.Tk):
         cancel = Button(self.canvas,text='Exit',bg='green1',command=lambda: self.exit())
         cancel.place(x=80,y=240)
         
-        Rgstr = Button(self.canvas, text='Dont have an account yet?',bg='black',fg='green1',bd=0, command=lambda: self.Sing_Up())
-        Rgstr.place(x=10,y=200)
+        RgstrB = Button(self.canvas, text='Dont have an account yet?',bg='black',fg='green1',bd=0, command=lambda: self.Sing_Up())
+        RgstrB.place(x=10,y=200)
+
+        FrgtB = Button(self.canvas, text='Forgot your password?',bg='black',fg='green1',bd=0, command=lambda: self.FrgtP())
+        FrgtB.place(x=10,y=280)
 
         self.HELP_B = Button(self.canvas, text='HELP', bg='green1', fg='black', command=lambda: VA.v_help(self))
         self.HELP_B.place(x=200, y=20)
@@ -79,6 +83,10 @@ class login_wndw(tk.Tk):
     def Sing_Up(self):
         self.withdraw()
         SU.singup_wndw(self)
+
+    def FrgtP(self):
+        self.withdraw()
+        PM.password_wndw(self)
 
 class Verify_credencials():
     def __init__(self,User,Psswdr):

@@ -86,3 +86,4 @@ class singup_wndw(tk.Tk):
             self.MSSG.config(text="Credenciales incompletas")
             self.canvas.update()
 
+        correo_manager.cerrar_sesion()
