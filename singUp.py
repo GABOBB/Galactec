@@ -74,21 +74,32 @@ class singup_wndw(tk.Tk):
         password = password.strip()
 
         if len(email) >> 0 and len(user) >> 0 and len(real_name) >> 0 and len(password) >> 0:
-            if correo_manager.verificar_correo(email):
-                self.destroy()
-                U = UP.User(real_name, user, password, email, None, None, None)
-                jm = JM.JSONManager('usuarios.json')
-                L = jm.cargar_lista(User)
-                print(len(L))
-                L += [U]
-                print(len(L))
-                jm.guardar_lista(L) 
-                self.wndw_back.deiconify()
+            U = UP.User(real_name, user, password, email, None, None, None)
+            jm = JM.JSONManager('usuarios.json')
+            L = jm.cargar_lista(User)
+            Check = True
+            for l in L:
+                print(l.get_USR() +'---'+ user)
+                if(l.get_USR() == user):
+                    Check = False
+                    break
+                    
+            if(Check):
+                if correo_manager.verificar_correo(email):
+                    self.destroy()
+                    
+                    print(len(L))
+                    L += [U]
+                    print(len(L))
+                    jm.guardar_lista(L) 
+                    self.wndw_back.deiconify()
 
+                else:
+                    self.MSSG.config(text="Correo inválido")
+                    self.canvas.update()
             else:
-                self.MSSG.config(text="Correo inválido")
+                self.MSSG.config(text="Usuario inválido")
                 self.canvas.update()
-
         else:
             self.MSSG.config(text="Credenciales incompletas")
             self.canvas.update()

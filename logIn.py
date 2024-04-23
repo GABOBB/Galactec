@@ -98,13 +98,13 @@ class Verify_credencials():
     def load_users(self):
         L = JM.JSONManager('usuarios.json').cargar_lista(User)
         for l in L:
-            print(l.get_NMBR())
+            print(l.get_USR())
         return L
         
     def verify(self, User, Psswdr):
         for U in self.L_U:
-            print(U.get_NMBR() + '-----' + User +";"+U.get_PSSWRD()+'-----'+ Psswdr)
-            if(U.get_NMBR() == User and U.get_PSSWRD() == Psswdr):
+            print(U.get_USR() + '-----' + User +";"+U.get_PSSWRD()+'-----'+ Psswdr)
+            if(U.get_USR() == User and U.get_PSSWRD() == Psswdr):
                 self.U_IN = U
                 return 0
             else:
