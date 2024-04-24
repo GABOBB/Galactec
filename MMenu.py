@@ -124,6 +124,12 @@ class Menu_wndw(tk.Tk):
         self.withdraw()
         Game.Game()
     
+    def STTNGS(self):
+        #self.withdraw()
+        pass
+        
+        
+    
     def confirmed(self, User):
         
         canvas_user = tk.Canvas(self, bg="Black", width=250, height=300,bd=0, highlightthickness=0)
@@ -157,6 +163,9 @@ class Menu_wndw(tk.Tk):
         
         Log_Out_B = Button(canvas_user, text='Log Out',fg='black',bg='green1',command=lambda: self.Log_out(X,canvas_user),bd=0)
         Log_Out_B.place(x=60,y=230)
+        
+        settings_B = Button(canvas_user, text = 'user settings',fg='green1',bg='black',command=lambda: self.STTNGS(),bd=0)
+        settings_B.place(x=60,y=280)
          
         self.SecndP_B.config(state=tk.NORMAL)
         print('se confirmaron las credenciales')
