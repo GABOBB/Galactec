@@ -11,12 +11,13 @@ import os
 
 
 class recover_password_wndw(tk.Tk):
-    def __init__(self, code, wndw):
+    def __init__(self, code, wndw, User):
         super().__init__()
         self.title("Recover your account")
         self.geometry('250x350')
         self.resizable(width=NO, height=NO)
-
+        
+        self.user = User
         self.wndw_back = wndw
         self.code = code
 
@@ -57,7 +58,15 @@ class recover_password_wndw(tk.Tk):
 
     def change_user_password(self, code, new_password):
         if code == self.code:
-            #Aqui va el codigo para reemplazar la contraseña en el archivo json
+            self.user.set_PSSWRD(new_password) 
+            jm = JM.JSONManager('usuarios.json')
+            l = jm.cargar_lista(User)
+            for i in l:#print(self.user.get_NMBR() + ' --- ' + self.user.get_PSSWRD() +'///'+ i.get_NMBR() + ' --- ' + i.get_PSSWRD())
+                if(i.get_USR() == self.user.get_USR()):
+                    i.set_PSSWRD(self.user.get_PSSWRD())
+                    break
+            jm.guardar_lista(l)
+            #Aqui va el codigo para reemplazar la contraseña 
 
             print(f'Contraseña cambiada a {new_password}')
 
@@ -85,14 +94,14 @@ class password_wndw(tk.Tk):
         self.MSSG = Label(self.canvas, text="", bg='Black', fg='red')
         self.MSSG.place(x=10, y=10)
 
-        EmailL = Label(self.canvas, text='User Email to recover password:', bg='green2', fg='Black')
-        EmailL.place(x=10, y=50)
+        UserL = Label(self.canvas, text='User:', bg='green2', fg='Black')
+        UserL.place(x=10, y=50)
 
-        EmailE = Entry(self.canvas, bg='black', fg='green2')
-        EmailE.place(x=10, y=90)
+        UserE = Entry(self.canvas, bg='black', fg='green2')
+        UserE.place(x=10, y=90)
 
         SendCodepB = Button(self.canvas, text='Send Code to email', bg='green1', fg='black',
-                            command=lambda: self.send_code(destinatario=EmailE.get()))
+                            command=lambda: self.find_user(UserE.get()))
         SendCodepB.place(x=20, y=140)
 
         ExitB = Button(self.canvas, text='Exit', bg='green1', command=lambda: self.exit())
@@ -106,8 +115,22 @@ class password_wndw(tk.Tk):
         self.destroy()
         self.wndw_back.deiconify()
         print('exit')
-
-    def send_code(self, destinatario):
+        
+    def find_user(self, user):
+        if len(user) >> 0 :
+            jm = JM.JSONManager('usuarios.json')
+            L = jm.cargar_lista(User)
+            for l in L:
+                print(l.get_USR() +'---'+ user)
+                if(l.get_USR() == user):
+                    self.send_code(l.get_CRR(),l)
+                    return 0
+            self.MSSG.config(text="Usuario inválido")
+            self.canvas.update()
+                    
+                    
+            
+    def send_code(self, destinatario, User):
         if destinatario:
             correo_manager = CM.CorreoManager(usuario="mendezariaspablo@gmail.com", password="zswt frhf gewi xzfu")
             self.random_code = ''.join(random.choices('0123456789', k=5))
@@ -115,7 +138,7 @@ class password_wndw(tk.Tk):
                                          mensaje=f"Su codigo para recuperar contraseña es: {self.random_code}")
             correo_manager.cerrar_sesion()
             self.withdraw()
-            recover_password_wndw(wndw=self.wndw_back, code=self.random_code)
+            recover_password_wndw(wndw=self.wndw_back, code=self.random_code, User=User)
 
         else:
             self.MSSG.config(text="Correo inválido")
