@@ -11,6 +11,77 @@ import sys
 import os
 import Game
 
+class c_D_u(tk.Tk):
+
+    def __init__(self,User,wndwB, indicador):
+        self.user = User
+        super().__init__()
+        
+        self.title('configuracion de usuario')
+        self.geometry('300x500')
+        self.resizable(width=NO,height=NO)
+        self.wm_attributes('-topmost',1)
+
+        self.canvas = tk.Canvas(self, bg="black", width=300, height=500, highlightthickness=0)
+        self.canvas.pack()
+        
+        self.wndwB = wndwB
+        self.indcdr = indicador
+        
+        NameL = Label(self.canvas, text='Real name:', bg='green2', fg='Black')
+        NameL.place(x=10, y=50)
+
+        NameE = Entry(self.canvas, bg='black', fg='green2')
+        NameE.insert(0, self.user.get_NMBR())
+        NameE.place(x=10, y=90)
+
+        UserL = Label(self.canvas, text='Username:', bg='green2', fg='Black')
+        UserL.place(x=10, y=140)
+
+        UserE = Entry(self.canvas, bg='black', fg='green2')
+        UserE.insert(0, self.user.get_USR()) 
+        UserE.place(x=10, y=180)
+
+        EmailL = Label(self.canvas, text='Email:', bg='green2', fg='Black')
+        EmailL.place(x=10, y=230)
+
+        EmailE = Entry(self.canvas, bg='black', fg='green2')
+        EmailE.insert(0, self.user.get_CRR()) 
+        EmailE.place(x=10, y=270)
+
+        Pwrdl = Label(self.canvas, text='Password:', bg='green1', fg='black')
+        Pwrdl.place(x=10, y=320)
+
+        PwrdE = Entry(self.canvas, bg='black', fg='green2')
+        PwrdE.insert(0, self.user.get_PSSWRD())
+        PwrdE.place(x=10, y=360)
+
+        change_B = Button(self.canvas,text='guardar cambios', bg='green1', fg='black', command=lambda: self.reescribir_D(NameE.get(), 
+                                                                                             UserE.get(),
+                                                                                             EmailE.get(),
+                                                                                             PwrdE.get()))
+        change_B.place(x=15,y=460)
+
+        self.mainloop()
+
+    def reescribir_D(self, name, user, email, psswrd):
+        new_user = User(name, user, psswrd, email, None, None, None)
+        l = JsonManager.JSONManager('usuarios.json').cargar_lista(User)
+        for i in l:
+            print(i.get_PSSWRD())
+            if(i == self.user):
+                i = new_user
+                print(i.get_PSSWRD())
+                break
+        JsonManager.JSONManager('usuarios.json').guardar_lista(l)
+        if(self.indcdr == 250):
+            self.wndwB.user1 = None
+            self.wndwB.confirmed(new_user)
+        else:
+            self.wndwB.user2 = None
+            self.wndwB.confirmed(new_user)
+        self.wndwB.deiconify()
+        self.destroy()
 
 class Menu_wndw(tk.Tk):
 
@@ -63,7 +134,7 @@ class Menu_wndw(tk.Tk):
         if self.user1 != None:
             self.user1 = None
             self.C_U1.destroy()
-        
+        self.withdraw()
         x = LGIN.login_wndw(self)
         
     
@@ -124,7 +195,7 @@ class Menu_wndw(tk.Tk):
         Game.Game()
     
     def STTNGS(self,X):
-        #self.withdraw()
+        self.withdraw()
         if(X==250):
             CDU = c_D_u(self.user1,self, X)
         else:
@@ -174,70 +245,3 @@ class Menu_wndw(tk.Tk):
 
 Menu_wndw()
 
-class c_D_u(tk.Tk):
-
-    def __init__(self,User,wndwB, indicador):
-        self.user = User
-        super().__init__()
-        
-        self.title('configuracion de usuario')
-        self.geometry('300x500')
-        self.resizable(width=NO,height=NO)
-        self.wm_attributes('-topmost',1)
-
-        self.canvas = tk.Canvas(self, bg="black", width=300, height=500, highlightthickness=0)
-        self.canvas.pack()
-        
-        self.wndwB = wndwB
-        self.indcdr = indicador
-        
-        NameL = Label(self.canvas, text='Real name:', bg='green2', fg='Black')
-        NameL.place(x=10, y=50)
-
-        NameE = Entry(self.canvas, bg='black', fg='green2')
-        NameE.config(text=self.user.get_NMBR())
-        NameE.place(x=10, y=90)
-
-        UserL = Label(self.canvas, text='Username:', bg='green2', fg='Black')
-        UserL.place(x=10, y=140)
-
-        UserE = Entry(self.canvas, bg='black', fg='green2')
-        UserE.config(text=self.user.get_USR())
-        UserE.place(x=10, y=180)
-
-        EmailL = Label(self.canvas, text='Email:', bg='green2', fg='Black')
-        EmailL.place(x=10, y=230)
-
-        EmailE = Entry(self.canvas, bg='black', fg='green2')
-        EmailE.config(text=self.user.get_CRR())
-        EmailE.place(x=10, y=270)
-
-        Pwrdl = Label(self.canvas, text='Password:', bg='green1', fg='black')
-        Pwrdl.place(x=10, y=320)
-
-        PwrdE = Entry(self.canvas, bg='black', fg='green2')
-        PwrdE.config(texte=self.user.get_PSSWRD())
-        PwrdE.place(x=10, y=360)
-
-        change_B = Button(self.canvas, bg='green1', fg='black', command=lambda: self.reescribir_D(NameE.get(), 
-                                                                                             UserE.get(),
-                                                                                             EmailE.get(),
-                                                                                             PwrdE.get()))
-        change_B.place(x=15,y=460)
-
-        self.mainloop()
-
-    def reescribir_D(self, name, user, email, psswrd):
-        new_user = User(name, user, psswrd, email, None, None, None)
-        l = JsonManager.JSONManager.cargar_lista('usuarios.json')
-        for i in l:
-            if(i == self.user):
-                i = new_user
-                break
-        JsonManager.JSONManager.guardar_lista(l)
-        if(self.indcdr == 250):
-            self.wndwB.user1 = None
-            self.wndwB.confirmed(new_user)
-        else:
-            self.wndwB.user2 = None
-            self.wndwB.confirmed(new_user)
