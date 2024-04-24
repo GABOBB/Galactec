@@ -7,6 +7,7 @@ import CorreoManager as CM
 import pygame
 import sys
 import os
+import re
 
 
 class singup_wndw(tk.Tk):
@@ -73,32 +74,58 @@ class singup_wndw(tk.Tk):
         real_name = real_name.strip()
         password = password.strip()
 
-        if len(email) >> 0 and len(user) >> 0 and len(real_name) >> 0 and len(password) >> 0:
-            U = UP.User(real_name, user, password, email, None, None, None)
-            jm = JM.JSONManager('usuarios.json')
-            L = jm.cargar_lista(User)
-            Check = True
-            for l in L:
-                print(l.get_USR() +'---'+ user)
-                if(l.get_USR() == user):
-                    Check = False
-                    break
-                    
-            if(Check):
-                if correo_manager.verificar_correo(email):
-                    self.destroy()
-                    
-                    print(len(L))
-                    L += [U]
-                    print(len(L))
-                    jm.guardar_lista(L) 
-                    self.wndw_back.deiconify()
+        if len(email) > 0 and len(user) > 0 and len(real_name) > 0 and len(password) > 0:
+            Tiene_M = any(c.isupper() for c in password)
+            Tiene_m = any(c.islower() for c in password)
+            Tiene_N = any(c.isdigit() for c in password)
+            Tiene_C = bool(re.search('[^A-Za-z0-9]', password))
+            if(len(password)>6 and Tiene_M and Tiene_m and Tiene_N and Tiene_C):
+                U = UP.User(real_name, user, password, email, None, None, None)
+                jm = JM.JSONManager('usuarios.json')
+                L = jm.cargar_lista(User)
+                print(L)
+                Check = 'correcto'
+                for l in L:
+                    print(l.get_USR() +'---'+ user)
+                    if(l.get_USR() == user):
+                        Check = 'usuario' 
+                        break
+                    if(l.get_CRR() == email):
+                        Check = 'mail'
+                        break
+                if(Check == 'correcto'):
+                    if correo_manager.verificar_correo(email):
+                        self.destroy()
+                        
+                        print(len(L))
+                        L += [U]
+                        print(len(L))
+                        jm.guardar_lista(L) 
+                        self.wndw_back.deiconify()
 
-                else:
-                    self.MSSG.config(text="Correo inválido")
+                    else:
+                        self.MSSG.config(text="Correo inválido")
+                        self.canvas.update()
+                elif(Check == 'User'):
+                    self.MSSG.config(text="Usuario ya existe")
                     self.canvas.update()
-            else:
-                self.MSSG.config(text="Usuario inválido")
+                elif(Check == 'mail'):
+                    self.MSSG.config(text="El correo se Uso")
+                    self.canvas.update()
+            elif(len(password)<7):
+                print(len(password))
+                self.MSSG.config(text='Contraseña muy corta')    
+                self.canvas.update()
+            elif(not Tiene_m or not Tiene_M):
+                print(not Tiene_m or not Tiene_M)
+                self.MSSG.config(text="La contraseña debe tener mayuscula\ny minusculas")
+                self.canvas.update()
+            elif(not Tiene_N):
+                print()
+                self.MSSG.config(text="la contraseña debe tener Numeros")
+                self.canvas.update()
+            elif(not Tiene_C):
+                self.MSSG.config(text="la contraseña debe tener caracte especial")
                 self.canvas.update()
         else:
             self.MSSG.config(text="Credenciales incompletas")
