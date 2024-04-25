@@ -11,6 +11,7 @@ alto = 600
 pygame.init()
 pygame.mixer.init()
 
+corazon_img = pygame.image.load('Imagenes/Jugador/corazon.png')
 fondo = pygame.image.load("Imagenes/Auxiliares/setting_image.png")
 laser_sonido = pygame.mixer.Sound("Sonidos/Efectos de sonido/laser.mp3")
 laser_sonido_2 = pygame.mixer.Sound("Sonidos/Efectos de sonido/Laser_2.wav")
@@ -27,13 +28,12 @@ def texto_puntuacion(frame, text, size, x, y):
     frame.blit(text_frame, text_rect)
     
 def barra_vida(frame, x, y, nivel):
-    longitud = 100
-    alto = 20
-    fill = int((nivel/100)*longitud)
-    border = pygame.Rect(x, y, longitud, alto)
-    fill = pygame.Rect(x, y, fill, alto)
-    pygame.draw.rect(frame, (255, 0, 55), fill)
-    pygame.draw.rect(frame, NEGRO, border, 4)
+# Calcular el número de corazones a dibujar
+    num_corazones = nivel // 10  # Asumiendo que cada corazón representa 10 puntos de vida
+
+    # Dibujar los corazones
+    for i in range(num_corazones):
+        frame.blit(corazon_img, (i * corazon_img.get_width(), y))
 
 class Jugador(pygame.sprite.Sprite):
     def __init__(self):
@@ -220,4 +220,4 @@ def Game():
         
     pygame.quit()
 
-#Game()
+Game()
