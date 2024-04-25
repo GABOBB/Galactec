@@ -117,7 +117,7 @@ class password_wndw(tk.Tk):
         print('exit')
         
     def find_user(self, user):
-        if len(user) >> 0 :
+        if len(user) > 0 :
             jm = JM.JSONManager('usuarios.json')
             L = jm.cargar_lista(User)
             for l in L:

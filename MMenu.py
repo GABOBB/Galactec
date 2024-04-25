@@ -66,19 +66,20 @@ class c_D_u(tk.Tk):
 
     def reescribir_D(self, name, user, email, psswrd):
         new_user = User(name, user, psswrd, email, None, None, None)
-        l = JsonManager.JSONManager('usuarios.json').cargar_lista(User)
+        JM = JsonManager.JSONManager('usuarios.json')
+        l = JM.cargar_lista(User)
         for i in l:
-            print(i.get_PSSWRD())
-            if(i == self.user):
-                i = new_user
-                print(i.get_PSSWRD())
-                break
-        JsonManager.JSONManager('usuarios.json').guardar_lista(l)
+            if(i.get_USR() == self.user.get_USR()):
+                i.chageAD(new_user)
+        JM.guardar_lista(l)
+        
         if(self.indcdr == 250):
             self.wndwB.user1 = None
+            self.wndwB.C_U1.destroy()
             self.wndwB.confirmed(new_user)
         else:
             self.wndwB.user2 = None
+            self.wndwB.C_U2.destroy()
             self.wndwB.confirmed(new_user)
         self.wndwB.deiconify()
         self.destroy()
@@ -156,7 +157,7 @@ class Menu_wndw(tk.Tk):
         PD.Podio_wndw(self)
 
     def Log_out(self,x,c):
-        self.withdraw()
+        #self.withdraw()
         if(x==250):
             c.destroy()
             self.user1=None

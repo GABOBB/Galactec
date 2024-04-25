@@ -13,6 +13,12 @@ class User():
         self.n = n
         self.M = M
         self.P = P
+    
+    def chageAD(self, User):
+        self.N = User.get_NMBR()
+        self.U = User.get_USR()
+        self.C = User.get_CRR()
+        self.P = User.get_PSSWRD()
         
     '''def __init__(self, nombre, user, mail, psswrd):
         self.N = nombre
