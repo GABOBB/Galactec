@@ -47,7 +47,7 @@ def perfil_jugador2(frame, name, size):
     text_rect.midtop = (720, 50)
     frame.blit(text_frame, text_rect)
 
-def generar_posiciones_triangular(filas, ancho_fila):
+def patron_triangular(filas, ancho_fila):
     posiciones = []
     for fila in range(filas):
         for i in range(fila + 1):
@@ -55,6 +55,9 @@ def generar_posiciones_triangular(filas, ancho_fila):
             y =  -(fila * 60)
             posiciones.append((x, y))
     return posiciones
+
+def aparicion_bonus(frame):
+    pass
 
 class Jugador(pygame.sprite.Sprite):
     def __init__(self):
@@ -172,7 +175,7 @@ def Game():
         grupo_jugador.add(enemigo)"""
     
     # Patron de enemigos
-    posiciones_enemigos = generar_posiciones_triangular(6, 100)
+    posiciones_enemigos = patron_triangular(6, 100)
     for pos in posiciones_enemigos:
         enemigo = Enemigos(pos[0], pos[1])
         grupo_enemigos.add(enemigo)
@@ -219,17 +222,14 @@ def Game():
         colicion1 = pygame.sprite.groupcollide(grupo_enemigos, grupo_balas_jugador, True, True)
         for i in colicion1:
             score += 10
-            enemigo.disparo_enemigo()
+            #enemigo.disparo_enemigo()
             explosion_sonido.play()
-            enemigo = Enemigos(300, 10)
-            grupo_enemigos.add(enemigo)
-            grupo_jugador.add(enemigo)
 
             
         # Coliciones jugador - balas_enemigo
         colicion2 = pygame.sprite.spritecollide(player, grupo_balas_enemigos, True)
         for j in colicion2:
-            player.vida -= 20
+            player.vida -= 10
             golpe_sonido.play()
             if player.vida <= 0:
                 play = False
@@ -238,9 +238,6 @@ def Game():
         hits = pygame.sprite.spritecollide(player, grupo_enemigos, False)
         for hit in hits:
             player.vida -= 50
-            enemigos = Enemigos(10, 10)
-            grupo_jugador.add(enemigos)
-            grupo_enemigos.add(enemigos)
             if player.vida <= 0:
                 play = False
                 
@@ -253,4 +250,4 @@ def Game():
         
     pygame.quit()
 
-Game()
+#Game()
