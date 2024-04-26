@@ -40,13 +40,21 @@ def perfil_jugador1(frame, name, size):
     text_rect.midtop = (50, 50)
     frame.blit(text_frame, text_rect)
 
-
 def perfil_jugador2(frame, name, size):
     font = pygame.font.SysFont("Small Fonts", size, bold=True)
     text_frame = font.render(name, True, BLANCO, NEGRO)
     text_rect = text_frame.get_rect()
     text_rect.midtop = (720, 50)
     frame.blit(text_frame, text_rect)
+
+def generar_posiciones_triangular(filas, ancho_fila):
+    posiciones = []
+    for fila in range(filas):
+        for i in range(fila + 1):
+            x = (700// 2) - (ancho_fila // 2) * fila + ancho_fila * i
+            y =  -(fila * 60)
+            posiciones.append((x, y))
+    return posiciones
 
 class Jugador(pygame.sprite.Sprite):
     def __init__(self):
@@ -61,7 +69,7 @@ class Jugador(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centerx = largo//2
         self.rect.centery = alto-50
-        self.vida = 100
+        self.vida = 50
     
     def update(self):
         keystate = pygame.key.get_pressed()
@@ -98,10 +106,14 @@ class Enemigos(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.image.load("Imagenes/Enemigos/enemigo.png").convert_alpha()
         self.rect = self.image.get_rect()
-         
-    def mover(self, velocidad):
-        self.y += velocidad
-            
+        self.rect.x = x
+        self.rect.y = y
+    
+    def mover(self):
+        self.rect.y += 5
+        if self.rect.top > alto:
+            self.rect.y = 0
+
     def disparo_enemigo(self):
         bala = Balas_enemigos(self.rect.centerx, self.rect.bottom)
         grupo_jugador.add(bala)
@@ -139,17 +151,12 @@ grupo_enemigos = pygame.sprite.Group()
 grupo_balas_jugador = pygame.sprite.Group()
 grupo_balas_enemigos = pygame.sprite.Group()
 
-ancho_enemigo = 50  
-espacio_enemigo = 20  
-ancho_pantalla = 800  
-
 # Ciclo del juego
 def Game():  
     play = True
     fps = 10
     clock = pygame.time.Clock()
     score = 0
-    vida = 100
     enemigos = []
 
     window = pygame.display.set_mode((largo, alto))
@@ -163,19 +170,15 @@ def Game():
         enemigo = Enemigos(10, 10)
         grupo_enemigos.add(enemigo)
         grupo_jugador.add(enemigo)"""
-
-    for i in range(6):
-        num_enemigos = i + 1
-        total_ancho = num_enemigos * ancho_enemigo + (num_enemigos - 1) * espacio_enemigo
-        x_inicial = (ancho_pantalla - total_ancho) / 2  
-        y = i * 100
-        for j in range(num_enemigos):
-            x = x_inicial + j * (ancho_enemigo + espacio_enemigo)
-            enemigo = Enemigos(x, y)
-            enemigos.append(enemigo)
-            grupo_enemigos.add(enemigo)
-            grupo_jugador.add(enemigo)
     
+    # Patron de enemigos
+    posiciones_enemigos = generar_posiciones_triangular(6, 100)
+    for pos in posiciones_enemigos:
+        enemigo = Enemigos(pos[0], pos[1])
+        grupo_enemigos.add(enemigo)
+        grupo_jugador.add(enemigo)
+
+
     # Carga fondo del nivel
     coord_list = []
     for i in range(60):
@@ -185,7 +188,10 @@ def Game():
     
     while play:
         clock.tick(fps)
-    
+        
+        for enemigo in grupo_enemigos:
+            enemigo.mover()
+
         # Dibuja el fondo
         window.fill(NEGRO)
         for coord in coord_list:
@@ -207,7 +213,6 @@ def Game():
         grupo_enemigos.update()
         grupo_balas_jugador.update()
         grupo_balas_enemigos.update()
-        
         grupo_jugador.draw(window)
         
         # Coliciones balas_jugador - enemigo
@@ -219,6 +224,7 @@ def Game():
             enemigo = Enemigos(300, 10)
             grupo_enemigos.add(enemigo)
             grupo_jugador.add(enemigo)
+
             
         # Coliciones jugador - balas_enemigo
         colicion2 = pygame.sprite.spritecollide(player, grupo_balas_enemigos, True)
@@ -231,9 +237,9 @@ def Game():
         # Coliciones jugador - enemigo
         hits = pygame.sprite.spritecollide(player, grupo_enemigos, False)
         for hit in hits:
-            player.vida -= 100
+            player.vida -= 50
             enemigos = Enemigos(10, 10)
-            grupo_jugador.ad(enemigos)
+            grupo_jugador.add(enemigos)
             grupo_enemigos.add(enemigos)
             if player.vida <= 0:
                 play = False
