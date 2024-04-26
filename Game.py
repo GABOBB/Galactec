@@ -28,10 +28,8 @@ def texto_puntuacion(frame, text, size, x, y):
     frame.blit(text_frame, text_rect)
     
 def barra_vida(frame, x, y, nivel):
-# Calcular el número de corazones a dibujar
-    num_corazones = nivel // 10  # Asumiendo que cada corazón representa 10 puntos de vida
+    num_corazones = nivel // 10 
 
-    # Dibujar los corazones
     for i in range(num_corazones):
         frame.blit(corazon_img, (i * corazon_img.get_width(), y))
 
@@ -85,14 +83,9 @@ class Enemigos(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.image.load("Imagenes/Enemigos/enemigo.png").convert_alpha()
         self.rect = self.image.get_rect()
-        self.rect.x = random.randrange(1, largo-50)
-        self.rect.y = 10
-        
-    def update(self):
-        self.rect.x += 5
-        if self.rect.x >= largo:
-            self.rect.x = 0
-            self.rect.y += 50
+         
+    def mover(self, velocidad):
+        self.y += velocidad
             
     def disparo_enemigo(self):
         bala = Balas_enemigos(self.rect.centerx, self.rect.bottom)
@@ -131,6 +124,10 @@ grupo_enemigos = pygame.sprite.Group()
 grupo_balas_jugador = pygame.sprite.Group()
 grupo_balas_enemigos = pygame.sprite.Group()
 
+ancho_enemigo = 50  # Ajusta según el tamaño de tus enemigos
+espacio_enemigo = 20  # Ajusta según cuánto espacio quieres entre enemigos
+ancho_pantalla = 800  # Ajusta según el tamaño de tu pantalla
+
 # Ciclo del juego
 def Game():  
     play = True
@@ -138,6 +135,7 @@ def Game():
     clock = pygame.time.Clock()
     score = 0
     vida = 100
+    enemigos = []
 
     window = pygame.display.set_mode((largo, alto))
     pygame.display.set_caption("Galatec")
@@ -146,10 +144,22 @@ def Game():
     grupo_jugador.add(player)
     grupo_balas_jugador.add(player)
 
-    for x in range(10):
+    """for x in range(10):
         enemigo = Enemigos(10, 10)
         grupo_enemigos.add(enemigo)
-        grupo_jugador.add(enemigo)
+        grupo_jugador.add(enemigo)"""
+
+    for i in range(6):
+        num_enemigos = i + 1
+        total_ancho = num_enemigos * ancho_enemigo + (num_enemigos - 1) * espacio_enemigo
+        x_inicial = (ancho_pantalla - total_ancho) / 2  # Centrar en la pantalla
+        y = i * 100
+        for j in range(num_enemigos):
+            x = x_inicial + j * (ancho_enemigo + espacio_enemigo)
+            enemigo = Enemigos(x, y)
+            enemigos.append(enemigo)
+            grupo_enemigos.add(enemigo)
+            grupo_jugador.add(enemigo)
     
     # Carga fondo del nivel
     coord_list = []
@@ -160,7 +170,7 @@ def Game():
     
     while play:
         clock.tick(fps)
-
+    
         # Dibuja el fondo
         window.fill(NEGRO)
         for coord in coord_list:
