@@ -7,6 +7,7 @@ import Setings as Stngs
 import logIn as LGIN
 import Podio as PD
 import v_ayuda as VA
+import re
 import sys
 import os
 import Game
@@ -62,27 +63,61 @@ class c_D_u(tk.Tk):
                                                                                              PwrdE.get()))
         change_B.place(x=15,y=460)
 
+        self.MSSGL = Label(self.canvas, text='', fg='green1', bg='black',bd=0)
+        self.MSSGL.place(x=10,y=10)
+
         self.mainloop()
 
     def reescribir_D(self, name, user, email, psswrd):
-        new_user = User(name, user, psswrd, email, None, None, None)
-        JM = JsonManager.JSONManager('usuarios.json')
-        l = JM.cargar_lista(User)
-        for i in l:
-            if(i.get_USR() == self.user.get_USR()):
-                i.chageAD(new_user)
-        JM.guardar_lista(l)
-        
-        if(self.indcdr == 250):
-            self.wndwB.user1 = None
-            self.wndwB.C_U1.destroy()
-            self.wndwB.confirmed(new_user)
+        #correo_manager = CM.CorreoManager(usuario="mendezariaspablo@gmail.com", password="zswt frhf gewi xzfu")
+
+        email = email.strip()
+        user = user.strip()
+        name = name.strip()
+        psswrd = psswrd.strip()
+
+        if len(email) > 0 and len(user) > 0 and len(name) > 0 and len(psswrd) > 0:
+            Tiene_M = any(c.isupper() for c in psswrd)
+            Tiene_m = any(c.islower() for c in psswrd)
+            Tiene_N = any(c.isdigit() for c in psswrd)
+            Tiene_C = bool(re.search('[^A-Za-z0-9]', psswrd))
+            if(len(psswrd)>6 and Tiene_M and Tiene_m and Tiene_N and Tiene_C):
+                new_user = User(name, user, psswrd, email, None, None, None)
+                JM = JsonManager.JSONManager('usuarios.json')
+                l = JM.cargar_lista(User)
+                for i in l:
+                    if(i.get_USR() == self.user.get_USR()):
+                        i.chageAD(new_user)
+                JM.guardar_lista(l)
+                
+                if(self.indcdr == 250):
+                    self.wndwB.user1 = None
+                    self.wndwB.C_U1.destroy()
+                    self.wndwB.confirmed(new_user)
+                else:
+                    self.wndwB.user2 = None
+                    self.wndwB.C_U2.destroy()
+                    self.wndwB.confirmed(new_user)
+                self.wndwB.deiconify()
+                self.destroy()
+            elif(len(psswrd)<7):
+                print(len(psswrd))
+                self.MSSGL.config(text='Contraseña muy corta')    
+                self.canvas.update()
+            elif(not Tiene_m or not Tiene_M):
+                print(not Tiene_m or not Tiene_M)
+                self.MSSGL.config(text="La contraseña debe tener mayuscula\ny minusculas")
+                self.canvas.update()
+            elif(not Tiene_N):
+                print()
+                self.MSSGL.config(text="la contraseña debe tener Numeros")
+                self.canvas.update()
+            elif(not Tiene_C):
+                self.MSSGL.config(text="la contraseña debe tener caracte especial")
+                self.canvas.update()
         else:
-            self.wndwB.user2 = None
-            self.wndwB.C_U2.destroy()
-            self.wndwB.confirmed(new_user)
-        self.wndwB.deiconify()
-        self.destroy()
+            self.MSSGL.config(text="Credenciales incompletas")
+            self.canvas.update()
 
 class Menu_wndw(tk.Tk):
 
