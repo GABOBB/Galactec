@@ -33,6 +33,21 @@ def barra_vida(frame, x, y, nivel):
     for i in range(num_corazones):
         frame.blit(corazon_img, (i * corazon_img.get_width(), y))
 
+def perfil_jugador1(frame, name, size):
+    font = pygame.font.SysFont("Small Fonts", size, bold=True)
+    text_frame = font.render(name, True, BLANCO, NEGRO)
+    text_rect = text_frame.get_rect()
+    text_rect.midtop = (50, 50)
+    frame.blit(text_frame, text_rect)
+
+
+def perfil_jugador2(frame, name, size):
+    font = pygame.font.SysFont("Small Fonts", size, bold=True)
+    text_frame = font.render(name, True, BLANCO, NEGRO)
+    text_rect = text_frame.get_rect()
+    text_rect.midtop = (720, 50)
+    frame.blit(text_frame, text_rect)
+
 class Jugador(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -124,9 +139,9 @@ grupo_enemigos = pygame.sprite.Group()
 grupo_balas_jugador = pygame.sprite.Group()
 grupo_balas_enemigos = pygame.sprite.Group()
 
-ancho_enemigo = 50  # Ajusta según el tamaño de tus enemigos
-espacio_enemigo = 20  # Ajusta según cuánto espacio quieres entre enemigos
-ancho_pantalla = 800  # Ajusta según el tamaño de tu pantalla
+ancho_enemigo = 50  
+espacio_enemigo = 20  
+ancho_pantalla = 800  
 
 # Ciclo del juego
 def Game():  
@@ -152,7 +167,7 @@ def Game():
     for i in range(6):
         num_enemigos = i + 1
         total_ancho = num_enemigos * ancho_enemigo + (num_enemigos - 1) * espacio_enemigo
-        x_inicial = (ancho_pantalla - total_ancho) / 2  # Centrar en la pantalla
+        x_inicial = (ancho_pantalla - total_ancho) / 2  
         y = i * 100
         for j in range(num_enemigos):
             x = x_inicial + j * (ancho_enemigo + espacio_enemigo)
@@ -225,6 +240,8 @@ def Game():
                 
         texto_puntuacion(window, ("SCORE: " + str(score) + " "), 30, largo - 85, 2)
         barra_vida(window, largo-285, 0, player.vida)
+        perfil_jugador1(window, "Jugador 1", 30)
+        perfil_jugador2(window, "Jugador 2", 30)
         
         pygame.display.flip()
         
