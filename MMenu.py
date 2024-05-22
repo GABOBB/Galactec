@@ -15,7 +15,7 @@ import Game
 class c_D_u(tk.Tk):
 
     def __init__(self,User,wndwB, indicador):
-        self.user = User
+        self.old_user = User
         super().__init__()
         
         self.title('configuracion de usuario')
@@ -33,28 +33,28 @@ class c_D_u(tk.Tk):
         NameL.place(x=10, y=50)
 
         NameE = Entry(self.canvas, bg='black', fg='green2')
-        NameE.insert(0, self.user.get_NMBR())
+        NameE.insert(0, self.old_user.get_NMBR())
         NameE.place(x=10, y=90)
 
         UserL = Label(self.canvas, text='Username:', bg='green2', fg='Black')
         UserL.place(x=10, y=140)
 
         UserE = Entry(self.canvas, bg='black', fg='green2')
-        UserE.insert(0, self.user.get_USR()) 
+        UserE.insert(0, self.old_user.get_USR()) 
         UserE.place(x=10, y=180)
 
         EmailL = Label(self.canvas, text='Email:', bg='green2', fg='Black')
         EmailL.place(x=10, y=230)
 
         EmailE = Entry(self.canvas, bg='black', fg='green2')
-        EmailE.insert(0, self.user.get_CRR()) 
+        EmailE.insert(0, self.old_user.get_CRR()) 
         EmailE.place(x=10, y=270)
 
         Pwrdl = Label(self.canvas, text='Password:', bg='green1', fg='black')
         Pwrdl.place(x=10, y=320)
 
         PwrdE = Entry(self.canvas, bg='black', fg='green2')
-        PwrdE.insert(0, self.user.get_PSSWRD())
+        PwrdE.insert(0, self.old_user.get_PSSWRD())
         PwrdE.place(x=10, y=360)
 
         change_B = Button(self.canvas,text='guardar cambios', bg='green1', fg='black', command=lambda: self.reescribir_D(NameE.get(), 
@@ -63,10 +63,17 @@ class c_D_u(tk.Tk):
                                                                                              PwrdE.get()))
         change_B.place(x=15,y=460)
 
-        self.MSSGL = Label(self.canvas, text='', fg='green1', bg='black',bd=0)
+        self.MSSGL = Label(self.canvas, text='', fg='red', bg='black',bd=0)
         self.MSSGL.place(x=10,y=10)
 
+        self.protocol("WM_DELETE_WINDOW", self.exit)
+        
         self.mainloop()
+
+    def exit(self):
+        self.destroy()
+        self.wndwB.deiconify()
+        
 
     def reescribir_D(self, name, user, email, psswrd):
         #correo_manager = CM.CorreoManager(usuario="mendezariaspablo@gmail.com", password="zswt frhf gewi xzfu")
@@ -85,21 +92,45 @@ class c_D_u(tk.Tk):
                 new_user = User(name, user, psswrd, email, None, None, None)
                 JM = JsonManager.JSONManager('usuarios.json')
                 l = JM.cargar_lista(User)
+            
+                Check = 'correcto'
+            
                 for i in l:
-                    if(i.get_USR() == self.user.get_USR()):
-                        i.chageAD(new_user)
-                JM.guardar_lista(l)
+                    if(i.get_USR() == user):
+                        if(i.get_USR() != self.old_user.get_USR()):
+                            Check = 'usuario' 
+                            break
+                    if(i.get_CRR() == email):
+                        if(i.get_CRR() != self.old_user.get_CRR()):    
+                            Check = 'mail'
+                            break
+                    
+                if(Check == 'correcto'):
+                    self.exit()
+                    for i in l:
+                        if(i.get_USR() == self.user.get_USR()):
+                            i.chageAD(new_user)
+                    JM.guardar_lista(l)
+                    
+                    if(self.indcdr == 250):
+                        self.wndwB.user1 = None
+                        self.wndwB.C_U1.destroy()
+                        self.wndwB.confirmed(new_user)
+                    else:
+                        self.wndwB.user2 = None
+                        self.wndwB.C_U2.destroy()
+                        self.wndwB.confirmed(new_user)
+                        
+                    #pide el salir de la ventana.
+                    
+                    
+                elif(Check == 'User'):
+                    self.MSSGL.config(text="Usuario ya existe")
+                    self.canvas.update()
+                elif(Check == 'mail'):
+                    self.MSSGL.config(text="El correo se Uso")
+                    self.canvas.update()
                 
-                if(self.indcdr == 250):
-                    self.wndwB.user1 = None
-                    self.wndwB.C_U1.destroy()
-                    self.wndwB.confirmed(new_user)
-                else:
-                    self.wndwB.user2 = None
-                    self.wndwB.C_U2.destroy()
-                    self.wndwB.confirmed(new_user)
-                self.wndwB.deiconify()
-                self.destroy()
             elif(len(psswrd)<7):
                 print(len(psswrd))
                 self.MSSGL.config(text='Contraseña muy corta')    
@@ -277,7 +308,7 @@ class Menu_wndw(tk.Tk):
         settings_B.place(x=60,y=280)
          
         self.SecndP_B.config(state=tk.NORMAL)
-        print('se confirmaron las credenciales')
+        #print('se confirmaron las credenciales')
 
 Menu_wndw()
 
