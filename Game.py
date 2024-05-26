@@ -1,4 +1,5 @@
-import pygame, random
+import pygame
+import random
 
 # Colores
 BLANCO = (255, 255, 255)
@@ -19,7 +20,18 @@ explosion_sonido = pygame.mixer.Sound("Sonidos/Efectos de sonido/Explosion.wav")
 golpe_sonido = pygame.mixer.Sound("Sonidos/Efectos de sonido/Golpe.wav")
 propulsores_sonido = pygame.mixer.SoundType("Sonidos/Efectos de sonido/Propulsores de nave.mp3")
 propulsores_sonido.set_volume(0.25)
-           
+vida_extra_activa = pygame.image.load('Imagenes/Auxiliares/vida extra activa.png')
+vida_extra_desactiva = pygame.image.load('Imagenes/Auxiliares/vida extra desactivada.png')
+puntos_extra_activo = pygame.image.load('Imagenes/Auxiliares/puntos extra activa.png')
+puntos_extra_desactivo = pygame.image.load('Imagenes/Auxiliares/puntos extra desactiva.png')
+escudo_activo = pygame.image.load('Imagenes/Auxiliares/escudo activo.png')
+escudo_desactivo = pygame.image.load('Imagenes/Auxiliares/escudo desactivo.png')
+marco_poderes = pygame.image.load('Imagenes/Auxiliares/Marco de poderes.png')
+         
+bonus_escudo = False
+bonus_vidas = False
+bonus_puntos = False
+         
 def texto_puntuacion(frame, text, size, x, y):
     font = pygame.font.SysFont("Small Fonts", size, bold=True)
     text_frame = font.render(text, True, BLANCO, NEGRO)
@@ -218,6 +230,33 @@ def Game():
         grupo_balas_enemigos.update()
         grupo_jugador.draw(window)
         
+        # Marco de los poderes
+        window.blit(marco_poderes, [largo - 207, alto - 60])
+        
+        # Vida extra
+        if bonus_vidas:
+            bonus_vidas_frame = vida_extra_activa
+        elif not bonus_vidas:
+            bonus_vidas_frame = vida_extra_desactiva
+            
+        window.blit(bonus_vidas_frame, [largo - 202, alto - 55])
+        
+        # Escudo
+        if bonus_escudo:
+            bonus_escudo_frame = escudo_activo
+        elif not bonus_escudo:
+            bonus_escudo_frame = escudo_desactivo
+            
+        window.blit(bonus_escudo_frame, [largo - 138, alto - 55])
+        
+        # Puntos dobles
+        if bonus_puntos:
+            bonus_puntos_frame = puntos_extra_activo
+        elif not bonus_puntos:
+            bonus_puntos_frame = puntos_extra_desactivo
+            
+        window.blit(bonus_puntos_frame, [largo - 74, alto - 55])
+        
         # Coliciones balas_jugador - enemigo
         colicion1 = pygame.sprite.groupcollide(grupo_enemigos, grupo_balas_jugador, True, True)
         for i in colicion1:
@@ -245,9 +284,9 @@ def Game():
         barra_vida(window, largo-285, 0, player.vida)
         perfil_jugador1(window, "Jugador 1", 30)
         perfil_jugador2(window, "Jugador 2", 30)
-        
+                        
         pygame.display.flip()
         
     pygame.quit()
 
-#Game()
+Game()
