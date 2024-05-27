@@ -11,6 +11,7 @@ NEGRO = (0, 0, 0)
 # Pantalla
 largo = 1200
 alto = 1000
+window = pygame.display.set_mode((largo, alto))
 
 pygame.init()
 pygame.mixer.init()
@@ -49,6 +50,9 @@ bonus_escudo = False
 bonus_vidas = False
 bonus_puntos = False
 
+# Jugador actual
+current_player = None
+
 
 def texto_puntuacion(frame, text, size, x, y):
     font = pygame.font.SysFont("Small Fonts", size, bold=True)
@@ -66,7 +70,7 @@ def barra_vida(frame, x, y, nivel):
 
 
 def perfiles_jugadores(frame, name1, name2):
-    font = pygame.font.SysFont("Small Fonts", 30, bold=True)
+    font = pygame.font.Font(None, 36)
     text_frame1 = font.render(name1, True, BLANCO, NEGRO)
     text_rect1 = text_frame1.get_rect()
     text_rect1.midtop = (50, 50)
@@ -151,8 +155,9 @@ def patron_linea_recta(max_enemigos):
 
 
 class Jugador(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, name):
         super().__init__()
+        self.name = name
         self.image = pygame.image.load("Imagenes/Jugador/Nave.png").convert_alpha()
         self.color_fondo = self.image.get_at((0, 0))
         self.image.set_colorkey(self.color_fondo)
@@ -267,24 +272,35 @@ grupo_balas_enemigos = pygame.sprite.Group()
 grupo_powerups = pygame.sprite.Group()
 
 
+def reiniciar_enemigos():
+    grupo_enemigos.empty()
+
 # Ciclo del juego
-def Game(player1, player2):
-    global bonus_vidas, bonus_puntos, bonus_escudo
+def Game(players):
+    global bonus_vidas, bonus_puntos, bonus_escudo, current_player
+
+    current_player = players[0]
+
     play = True
     fps = 10
     clock = pygame.time.Clock()
     score = 0
-    patron_actual = ""
+    patron_actual = "triangular"
 
-    window = pygame.display.set_mode((largo, alto))
     pygame.display.set_caption("Galatec")
 
-    player = Jugador()
-    grupo_jugador.add(player)
+    grupo_jugador.add(current_player)
 
-    #posiciones_enemigos = patron_triangular(6, 200)
-    posiciones_enemigos = patron_linea_recta(20)
-    patron_actual = "recta"
+    match patron_actual:
+        case "triangular":
+            posiciones_enemigos = patron_triangular(6, 200)
+        case "onda":
+            posiciones_enemigos = patron_onda(20)
+        case "recta":
+            posiciones_enemigos = patron_linea_recta(20)
+        case "espiral":
+            posiciones_enemigos = patron_espiral(20)
+
     for pos in posiciones_enemigos:
         enemigo = Enemigos(pos[0], pos[1])
         grupo_enemigos.add(enemigo)
@@ -322,7 +338,7 @@ def Game(player1, player2):
                 play = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    player.disparo_normal()
+                    current_player.disparo_normal()
 
         grupo_jugador.update()
         grupo_enemigos.update()
@@ -367,25 +383,34 @@ def Game(player1, player2):
 
         window.blit(bonus_puntos_frame, [largo - 74, alto - 55])
 
+        if current_player.vida <= 0:
+            if current_player == players[0]:
+                current_player = players[1]
+            else:
+                current_player = players[0]
+            current_player.vida = 50
+            current_player.rect.centerx = largo // 2
+            current_player.rect.centery = alto - 50
+
+            reiniciar_enemigos()
+
         colicion1 = pygame.sprite.groupcollide(grupo_enemigos, grupo_balas_jugador, True, True)
         for i in colicion1:
             score += 10
             explosion_sonido.play()
 
-        colicion2 = pygame.sprite.spritecollide(player, grupo_balas_enemigos, True)
+        colicion2 = pygame.sprite.spritecollide(current_player, grupo_balas_enemigos, True)
         for j in colicion2:
-            player.vida -= 10
+            current_player.vida -= 10
             golpe_sonido.play()
-            if player.vida <= 0:
-                play = False
 
-        hits = pygame.sprite.spritecollide(player, grupo_enemigos, False)
+        hits = pygame.sprite.spritecollide(current_player, grupo_enemigos, False)
         for hit in hits:
-            player.vida -= 50
-            if player.vida <= 0:
-                play = False
+            current_player.vida -= 50
+            #if current_player.vida <= 0:
+                #play = False
 
-        power_up_hits = pygame.sprite.spritecollide(player, grupo_powerups, True)
+        power_up_hits = pygame.sprite.spritecollide(current_player, grupo_powerups, True)
         for power_up_hit in power_up_hits:
             if power_up_hit.image == bonus_vida_image:
                 bonus_vidas = True
@@ -395,15 +420,16 @@ def Game(player1, player2):
                 bonus_escudo = True
 
         texto_puntuacion(window, ("SCORE: " + str(score) + " "), 30, largo - 85, 2)
-        barra_vida(window, largo - 285, 0, player.vida)
-        if player2 != None:
-            perfiles_jugadores(window, player1, player2)
+        barra_vida(window, largo - 285, 0, current_player.vida)
+
+        if players[1] != None:
+            perfiles_jugadores(window, players[0].name, players[1].name)
         else:
-            perfiles_jugadores(window, player1, "")
+            perfiles_jugadores(window, players[0].name, "")
 
         pygame.display.flip()
 
     pygame.quit()
 
 
-Game("player1", "player2")
+Game([Jugador("Player 1"), Jugador("Player 2")])
