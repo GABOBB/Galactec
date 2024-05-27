@@ -1,3 +1,5 @@
+import math
+
 import pygame
 import random
 import time
@@ -76,13 +78,75 @@ def perfiles_jugadores(frame, name1, name2):
     frame.blit(text_frame2, text_rect2)
 
 
-def patron_triangular(filas, ancho_fila):
+def patron_triangular(filas, ancho_fila, max_enemigos=20):
     posiciones = []
+    enemigos_generados = 0
     for fila in range(filas):
         for i in range(fila + 1):
-            x = (1100 // 2) - (ancho_fila // 2) * fila + ancho_fila * i
-            y = -(fila * 60)
+            if enemigos_generados < 15:
+                x = (1100 // 2) - (ancho_fila // 2) * fila + ancho_fila * i
+                y = -(fila * 100)
+                posiciones.append((x, y))
+                enemigos_generados += 1
+
+            else:
+                x = (1100 // 2) - (ancho_fila // 2) * fila + ancho_fila * (i + 0.5)
+                y = -(fila * 100)
+                posiciones.append((x, y))
+                enemigos_generados += 1
+
+                if enemigos_generados >= max_enemigos:
+                    break
+        if enemigos_generados >= max_enemigos:
+            break
+    return posiciones
+
+
+def patron_onda(max_enemigos):
+    posiciones = []
+    for i in range(max_enemigos):
+        x = i * (1200 // max_enemigos)
+        y = 200 * math.sin(2 * math.pi * i / max_enemigos)
+        posiciones.append((x, y))
+    return posiciones
+
+
+def patron_lluvia(max_enemigos):
+    posiciones = []
+    for i in range(max_enemigos):
+        x = random.randint(50, 1150)
+        y = random.randint(i * -150, 0)  # Ajusta el rango vertical
+        posiciones.append((x, y))
+    return posiciones
+
+
+def patron_espiral(max_enemigos):
+    posiciones = []
+    for i in range(max_enemigos):
+        angle = 2 * math.pi * i / max_enemigos
+        radius = 400  # Ajusta el radio de la espiral
+        x = 550 + radius * math.cos(angle)
+        y = -radius * math.sin(angle)
+        posiciones.append((x, y))
+    return posiciones
+
+
+def patron_linea_recta(max_enemigos):
+    enemigos_generados = 0
+    posiciones = []
+    for i in range(max_enemigos):
+        if enemigos_generados >= 10:
+            x = i * (1200 // max_enemigos)
+            y = -100
+            enemigos_generados += 1
             posiciones.append((x, y))
+
+        else:
+            x = i * (1200 // max_enemigos)
+            y = 0
+            enemigos_generados += 1
+            posiciones.append((x, y))
+
     return posiciones
 
 
@@ -141,6 +205,11 @@ class Enemigos(pygame.sprite.Sprite):
         self.rect.y += 5
         if self.rect.top > alto:
             self.rect.y = 0
+
+    def mover_horizontal(self):
+        self.rect.x += 10
+        if self.rect.left > largo:
+            self.rect.x = 0
 
     def disparo_enemigo(self):
         bala = Balas_enemigos(self.rect.centerx, self.rect.bottom)
@@ -205,6 +274,7 @@ def Game(player1, player2):
     fps = 10
     clock = pygame.time.Clock()
     score = 0
+    patron_actual = ""
 
     window = pygame.display.set_mode((largo, alto))
     pygame.display.set_caption("Galatec")
@@ -212,7 +282,9 @@ def Game(player1, player2):
     player = Jugador()
     grupo_jugador.add(player)
 
-    posiciones_enemigos = patron_triangular(6, 200)
+    #posiciones_enemigos = patron_triangular(6, 200)
+    posiciones_enemigos = patron_linea_recta(20)
+    patron_actual = "recta"
     for pos in posiciones_enemigos:
         enemigo = Enemigos(pos[0], pos[1])
         grupo_enemigos.add(enemigo)
@@ -233,6 +305,8 @@ def Game(player1, player2):
 
         for enemigo in grupo_enemigos:
             enemigo.mover()
+            if patron_actual == "onda" or patron_actual == "recta":
+                enemigo.mover_horizontal()
 
         window.fill(NEGRO)
         for coord in coord_list:
@@ -332,4 +406,4 @@ def Game(player1, player2):
     pygame.quit()
 
 
-#Game()
+Game("player1", "player2")
