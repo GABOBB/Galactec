@@ -53,7 +53,8 @@ bonus_puntos = False
 # Jugador actual
 current_player = None
 nivel = 1
-
+patron_actual = None
+posiciones_enemigos = None
 
 def texto_puntuacion(frame, text, size, x, y):
     font = pygame.font.SysFont("Small Fonts", size, bold=True)
@@ -278,7 +279,7 @@ def reiniciar_enemigos():
 
 
 def cambiar_nivel():
-    global nivel
+    global nivel, patron_actual, posiciones_enemigos
     grupo_enemigos.empty()
 
     if nivel == 1:
@@ -300,29 +301,19 @@ def cambiar_nivel():
 
 # Ciclo del juego
 def Game(players):
-    global bonus_vidas, bonus_puntos, bonus_escudo, current_player, nivel
+    global bonus_vidas, bonus_puntos, bonus_escudo, current_player, nivel, patron_actual, posiciones_enemigos
 
     current_player = players[0]
+    cambiar_nivel()
 
     play = True
     fps = 10
     clock = pygame.time.Clock()
     score = 0
-    patron_actual = "triangular"
 
     pygame.display.set_caption("Galatec")
 
     grupo_jugador.add(current_player)
-
-    match patron_actual:
-        case "triangular":
-            posiciones_enemigos = patron_triangular(6, 200)
-        case "onda":
-            posiciones_enemigos = patron_onda(20)
-        case "recta":
-            posiciones_enemigos = patron_linea_recta(20)
-        case "espiral":
-            posiciones_enemigos = patron_espiral(20)
 
     for pos in posiciones_enemigos:
         enemigo = Enemigos(pos[0], pos[1])
