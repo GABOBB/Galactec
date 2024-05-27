@@ -199,7 +199,7 @@ grupo_powerups = pygame.sprite.Group()
 
 
 # Ciclo del juego
-def Game():
+def Game(player1, player2):
     global bonus_vidas, bonus_puntos, bonus_escudo
     play = True
     fps = 10
@@ -322,11 +322,14 @@ def Game():
 
         texto_puntuacion(window, ("SCORE: " + str(score) + " "), 30, largo - 85, 2)
         barra_vida(window, largo - 285, 0, player.vida)
-        perfiles_jugadores(window, "Player 1", "Player 2")
+        if player2 != None:
+            perfiles_jugadores(window, player1, player2)
+        else:
+            perfiles_jugadores(window, player1, "")
 
         pygame.display.flip()
 
     pygame.quit()
 
 
-Game()
+#Game()
