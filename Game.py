@@ -1,5 +1,4 @@
 import math
-
 import pygame
 import random
 import time
@@ -8,13 +7,18 @@ import time
 BLANCO = (255, 255, 255)
 NEGRO = (0, 0, 0)
 
-# Pantalla
-largo = 1200
-alto = 1000
-window = pygame.display.set_mode((largo, alto))
-
 pygame.init()
 pygame.mixer.init()
+
+# Obtén el tamaño de la pantalla del sistema
+screen_info = pygame.display.Info()
+
+# Configuración de la pantalla
+largo = screen_info.current_w
+alto = screen_info.current_h - 30
+
+# Crear la ventana en modo pantalla completa
+window = pygame.display.set_mode((largo, alto), pygame.RESIZABLE)
 
 corazon_img = pygame.image.load('Imagenes/Jugador/corazon.png')
 fondo = pygame.image.load("Imagenes/Auxiliares/setting_image.png")
@@ -63,13 +67,11 @@ def texto_puntuacion(frame, text, size, x, y):
     text_rect.midtop = (x, y)
     frame.blit(text_frame, text_rect)
 
-
 def barra_vida(frame, x, y, nivel):
     num_corazones = nivel // 10
 
     for i in range(num_corazones):
         frame.blit(corazon_img, (i * corazon_img.get_width(), y))
-
 
 def perfiles_jugadores(frame, name1, name2):
     font = pygame.font.Font(None, 36)
@@ -83,7 +85,6 @@ def perfiles_jugadores(frame, name1, name2):
     frame.blit(text_frame1, text_rect1)
     frame.blit(text_frame2, text_rect2)
 
-
 def patron_triangular(filas, ancho_fila, max_enemigos=20):
     posiciones = []
     enemigos_generados = 0
@@ -94,7 +95,6 @@ def patron_triangular(filas, ancho_fila, max_enemigos=20):
                 y = -(fila * 100)
                 posiciones.append((x, y))
                 enemigos_generados += 1
-
             else:
                 x = (1100 // 2) - (ancho_fila // 2) * fila + ancho_fila * (i + 0.5)
                 y = -(fila * 100)
@@ -107,7 +107,6 @@ def patron_triangular(filas, ancho_fila, max_enemigos=20):
             break
     return posiciones
 
-
 def patron_onda(max_enemigos):
     posiciones = []
     for i in range(max_enemigos):
@@ -116,7 +115,6 @@ def patron_onda(max_enemigos):
         posiciones.append((x, y))
     return posiciones
 
-
 def patron_lluvia(max_enemigos):
     posiciones = []
     for i in range(max_enemigos):
@@ -124,7 +122,6 @@ def patron_lluvia(max_enemigos):
         y = random.randint(i * -150, 0)  # Ajusta el rango vertical
         posiciones.append((x, y))
     return posiciones
-
 
 def patron_espiral(max_enemigos):
     posiciones = []
@@ -136,7 +133,6 @@ def patron_espiral(max_enemigos):
         posiciones.append((x, y))
     return posiciones
 
-
 def patron_linea_recta(max_enemigos):
     enemigos_generados = 0
     posiciones = []
@@ -146,15 +142,12 @@ def patron_linea_recta(max_enemigos):
             y = -100
             enemigos_generados += 1
             posiciones.append((x, y))
-
         else:
             x = i * (1200 // max_enemigos)
             y = 0
             enemigos_generados += 1
             posiciones.append((x, y))
-
     return posiciones
-
 
 class Jugador(pygame.sprite.Sprite):
     def __init__(self, name):
@@ -199,7 +192,6 @@ class Jugador(pygame.sprite.Sprite):
         grupo_balas_jugador.add(bala_normal)
         laser_sonido.play()
 
-
 class Enemigos(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
@@ -224,7 +216,6 @@ class Enemigos(pygame.sprite.Sprite):
         grupo_balas_enemigos.add(bala)
         laser_sonido_2.play()
 
-
 class Balas(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
@@ -237,7 +228,6 @@ class Balas(pygame.sprite.Sprite):
         self.rect.y += -25
         if self.rect.bottom < 0:
             self.kill()
-
 
 class Balas_enemigos(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -252,7 +242,6 @@ class Balas_enemigos(pygame.sprite.Sprite):
         if self.rect.bottom > alto:
             self.kill()
 
-
 class PowerUp(pygame.sprite.Sprite):
     def __init__(self, image, x, y):
         super().__init__()
@@ -266,17 +255,14 @@ class PowerUp(pygame.sprite.Sprite):
         if self.rect.top > alto:
             self.kill()
 
-
 grupo_jugador = pygame.sprite.Group()
 grupo_enemigos = pygame.sprite.Group()
 grupo_balas_jugador = pygame.sprite.Group()
 grupo_balas_enemigos = pygame.sprite.Group()
 grupo_powerups = pygame.sprite.Group()
 
-
 def reiniciar_enemigos():
     grupo_enemigos.empty()
-
 
 def cambiar_nivel():
     global nivel, patron_actual, posiciones_enemigos
@@ -297,7 +283,6 @@ def cambiar_nivel():
         enemigo = Enemigos(pos[0], pos[1])
         grupo_enemigos.add(enemigo)
         grupo_jugador.add(enemigo)
-
 
 # Ciclo del juego
 def Game(players):
@@ -327,7 +312,7 @@ def Game(players):
         coord_list.append([x, y])
 
     last_power_up_time = time.time()
-    power_up_interval = 15  # segundos
+    power_up_interval = 5  # segundos
 
     while play:
         clock.tick(fps)
@@ -353,6 +338,9 @@ def Game(players):
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     current_player.disparo_normal()
+                elif event.key == pygame.K_a and bonus_vidas:
+                    current_player.vida += 10
+                    bonus_vidas = False  # Desactivar el bonus después de usarlo
 
         grupo_jugador.update()
         grupo_enemigos.update()
@@ -425,8 +413,6 @@ def Game(players):
         hits = pygame.sprite.spritecollide(current_player, grupo_enemigos, False)
         for hit in hits:
             current_player.vida -= 50
-            #if current_player.vida <= 0:
-                #play = False
 
         power_up_hits = pygame.sprite.spritecollide(current_player, grupo_powerups, True)
         for power_up_hit in power_up_hits:
@@ -448,6 +434,5 @@ def Game(players):
         pygame.display.flip()
 
     pygame.quit()
-
 
 Game([Jugador("Player 1"), Jugador("Player 2")])
