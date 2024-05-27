@@ -52,6 +52,7 @@ bonus_puntos = False
 
 # Jugador actual
 current_player = None
+nivel = 1
 
 
 def texto_puntuacion(frame, text, size, x, y):
@@ -275,9 +276,31 @@ grupo_powerups = pygame.sprite.Group()
 def reiniciar_enemigos():
     grupo_enemigos.empty()
 
+
+def cambiar_nivel():
+    global nivel
+    grupo_enemigos.empty()
+
+    if nivel == 1:
+        posiciones_enemigos = patron_triangular(6, 200)
+    elif nivel == 2:
+        posiciones_enemigos = patron_onda(20)
+    elif nivel == 3:
+        posiciones_enemigos = patron_lluvia(20)
+    elif nivel == 4:
+        posiciones_enemigos = patron_espiral(20)
+    elif nivel == 5:
+        posiciones_enemigos = patron_linea_recta(20)
+
+    for pos in posiciones_enemigos:
+        enemigo = Enemigos(pos[0], pos[1])
+        grupo_enemigos.add(enemigo)
+        grupo_jugador.add(enemigo)
+
+
 # Ciclo del juego
 def Game(players):
-    global bonus_vidas, bonus_puntos, bonus_escudo, current_player
+    global bonus_vidas, bonus_puntos, bonus_escudo, current_player, nivel
 
     current_player = players[0]
 
@@ -393,6 +416,10 @@ def Game(players):
             current_player.rect.centery = alto - 50
 
             reiniciar_enemigos()
+
+        if len(grupo_enemigos) == 0:
+            nivel += 1
+            cambiar_nivel()
 
         colicion1 = pygame.sprite.groupcollide(grupo_enemigos, grupo_balas_jugador, True, True)
         for i in colicion1:
