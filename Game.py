@@ -53,6 +53,7 @@ image_indices = list(range(len(power_up_images)))
 bonus_escudo = False
 bonus_vidas = False
 bonus_puntos = False
+power_up_puntos_activo = False
 
 # Jugador actual
 current_player = None
@@ -286,8 +287,8 @@ def cambiar_nivel():
 
 # Ciclo del juego
 def Game(players):
-    global bonus_vidas, bonus_puntos, bonus_escudo, current_player, nivel, patron_actual, posiciones_enemigos
-
+    global bonus_vidas, bonus_puntos, bonus_escudo, current_player, nivel, patron_actual, posiciones_enemigos, power_up_puntos_activo
+        
     current_player = players[0]
     cambiar_nivel()
 
@@ -312,11 +313,16 @@ def Game(players):
         coord_list.append([x, y])
 
     last_power_up_time = time.time()
-    power_up_interval = 5  # segundos
+    power_up_interval = 5
 
     while play:
         clock.tick(fps)
         current_time = time.time()
+        
+        if power_up_puntos_activo:
+            score_multiplier = 2
+        else:
+            score_multiplier = 1
 
         for enemigo in grupo_enemigos:
             enemigo.mover()
@@ -340,7 +346,10 @@ def Game(players):
                     current_player.disparo_normal()
                 elif event.key == pygame.K_a and bonus_vidas:
                     current_player.vida += 10
-                    bonus_vidas = False  # Desactivar el bonus después de usarlo
+                    bonus_vidas = False
+                elif event.key == pygame.K_d and bonus_puntos:
+                    power_up_puntos_activo = True
+                    bonus_puntos = False
 
         grupo_jugador.update()
         grupo_enemigos.update()
@@ -402,7 +411,7 @@ def Game(players):
 
         colicion1 = pygame.sprite.groupcollide(grupo_enemigos, grupo_balas_jugador, True, True)
         for i in colicion1:
-            score += 10
+            score += 10 * score_multiplier
             explosion_sonido.play()
 
         colicion2 = pygame.sprite.spritecollide(current_player, grupo_balas_enemigos, True)
