@@ -7,8 +7,8 @@ BLANCO = (255, 255, 255)
 NEGRO = (0, 0, 0)
 
 # Pantalla
-largo = 800
-alto = 600
+largo = 1200
+alto = 1000
 
 pygame.init()
 pygame.mixer.init()
@@ -47,6 +47,7 @@ bonus_escudo = False
 bonus_vidas = False
 bonus_puntos = False
 
+
 def texto_puntuacion(frame, text, size, x, y):
     font = pygame.font.SysFont("Small Fonts", size, bold=True)
     text_frame = font.render(text, True, BLANCO, NEGRO)
@@ -54,34 +55,36 @@ def texto_puntuacion(frame, text, size, x, y):
     text_rect.midtop = (x, y)
     frame.blit(text_frame, text_rect)
 
+
 def barra_vida(frame, x, y, nivel):
     num_corazones = nivel // 10
 
     for i in range(num_corazones):
         frame.blit(corazon_img, (i * corazon_img.get_width(), y))
 
-def perfil_jugador1(frame, name, size):
-    font = pygame.font.SysFont("Small Fonts", size, bold=True)
-    text_frame = font.render(name, True, BLANCO, NEGRO)
-    text_rect = text_frame.get_rect()
-    text_rect.midtop = (50, 50)
-    frame.blit(text_frame, text_rect)
 
-def perfil_jugador2(frame, name, size):
-    font = pygame.font.SysFont("Small Fonts", size, bold=True)
-    text_frame = font.render(name, True, BLANCO, NEGRO)
-    text_rect = text_frame.get_rect()
-    text_rect.midtop = (720, 50)
-    frame.blit(text_frame, text_rect)
+def perfiles_jugadores(frame, name1, name2):
+    font = pygame.font.SysFont("Small Fonts", 30, bold=True)
+    text_frame1 = font.render(name1, True, BLANCO, NEGRO)
+    text_rect1 = text_frame1.get_rect()
+    text_rect1.midtop = (50, 50)
+    text_frame2 = font.render(name2, True, BLANCO, NEGRO)
+    text_rect2 = text_frame2.get_rect()
+    text_rect2.midtop = (950, 50)
+
+    frame.blit(text_frame1, text_rect1)
+    frame.blit(text_frame2, text_rect2)
+
 
 def patron_triangular(filas, ancho_fila):
     posiciones = []
     for fila in range(filas):
         for i in range(fila + 1):
-            x = (700 // 2) - (ancho_fila // 2) * fila + ancho_fila * i
+            x = (1100 // 2) - (ancho_fila // 2) * fila + ancho_fila * i
             y = -(fila * 60)
             posiciones.append((x, y))
     return posiciones
+
 
 class Jugador(pygame.sprite.Sprite):
     def __init__(self):
@@ -125,6 +128,7 @@ class Jugador(pygame.sprite.Sprite):
         grupo_balas_jugador.add(bala_normal)
         laser_sonido.play()
 
+
 class Enemigos(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
@@ -144,6 +148,7 @@ class Enemigos(pygame.sprite.Sprite):
         grupo_balas_enemigos.add(bala)
         laser_sonido_2.play()
 
+
 class Balas(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
@@ -156,6 +161,7 @@ class Balas(pygame.sprite.Sprite):
         self.rect.y += -25
         if self.rect.bottom < 0:
             self.kill()
+
 
 class Balas_enemigos(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -170,6 +176,7 @@ class Balas_enemigos(pygame.sprite.Sprite):
         if self.rect.bottom > alto:
             self.kill()
 
+
 class PowerUp(pygame.sprite.Sprite):
     def __init__(self, image, x, y):
         super().__init__()
@@ -183,11 +190,13 @@ class PowerUp(pygame.sprite.Sprite):
         if self.rect.top > alto:
             self.kill()
 
+
 grupo_jugador = pygame.sprite.Group()
 grupo_enemigos = pygame.sprite.Group()
 grupo_balas_jugador = pygame.sprite.Group()
 grupo_balas_enemigos = pygame.sprite.Group()
 grupo_powerups = pygame.sprite.Group()
+
 
 # Ciclo del juego
 def Game():
@@ -203,7 +212,7 @@ def Game():
     player = Jugador()
     grupo_jugador.add(player)
 
-    posiciones_enemigos = patron_triangular(6, 100)
+    posiciones_enemigos = patron_triangular(6, 200)
     for pos in posiciones_enemigos:
         enemigo = Enemigos(pos[0], pos[1])
         grupo_enemigos.add(enemigo)
@@ -313,11 +322,11 @@ def Game():
 
         texto_puntuacion(window, ("SCORE: " + str(score) + " "), 30, largo - 85, 2)
         barra_vida(window, largo - 285, 0, player.vida)
-        perfil_jugador1(window, "Jugador 1", 30)
-        perfil_jugador2(window, "Jugador 2", 30)
+        perfiles_jugadores(window, "Player 1", "Player 2")
 
         pygame.display.flip()
 
     pygame.quit()
+
 
 Game()
