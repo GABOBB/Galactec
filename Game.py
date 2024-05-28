@@ -219,6 +219,8 @@ class Jugador(pygame.sprite.Sprite):
         else:
             return  # No dibujar escudo si no hay capas
 
+
+        escudo_rect = escudo_image.get_rect(center=(self.rect.centerx , self.rect.centery - 30))
         frame.blit(escudo_image, escudo_rect.topleft)
 
 class Enemigos(pygame.sprite.Sprite):
@@ -385,6 +387,11 @@ def Game(players):
                 elif event.key == pygame.K_d and bonus_puntos:
                     power_up_puntos_activo = True
                     bonus_puntos = False
+                elif event.key == pygame.K_s and bonus_escudo:
+                    current_player.activar_escudo()
+                    bonus_escudo = False  # Deactivate bonus after use
+
+
 
         grupo_jugador.update()
         grupo_enemigos.update()
@@ -407,6 +414,7 @@ def Game(players):
             last_power_up_time = current_time
 
         window.blit(marco_poderes, [largo - 207, alto - 60])
+        current_player.dibujar_escudo(window)
 
         if bonus_vidas:
             bonus_vidas_frame = vida_extra_activa
@@ -451,10 +459,18 @@ def Game(players):
 
         colicion2 = pygame.sprite.spritecollide(current_player, grupo_balas_enemigos, True)
         for j in colicion2:
+            if current_player.escudo > 0:
+                current_player.escudo -= 1
+            else:
+                current_player.vida -= 10
             golpe_sonido.play()
 
         hits = pygame.sprite.spritecollide(current_player, grupo_enemigos, False)
         for hit in hits:
+            if current_player.escudo > 0:
+                current_player.escudo -= 1
+            else:
+                current_player.vida -= 50
 
         power_up_hits = pygame.sprite.spritecollide(current_player, grupo_powerups, True)
         for power_up_hit in power_up_hits:
