@@ -38,6 +38,9 @@ marco_poderes = pygame.image.load('Imagenes/Auxiliares/Marco de poderes.png')
 bonus_vida_image = pygame.image.load('Imagenes/Auxiliares/bonus vida.png')
 bonus_escudo_image = pygame.image.load('Imagenes/Auxiliares/bonus escudo.png')
 bonus_puntos_image = pygame.image.load('Imagenes/Auxiliares/bonus puntos.png')
+escudo1_image = pygame.image.load('Imagenes/Auxiliares/escudo1capas.png')
+escudo2_image = pygame.image.load('Imagenes/Auxiliares/escudo2capas.png')
+escudo3_image = pygame.image.load('Imagenes/Auxiliares/escudo3capas.png')
 
 # Power-up images
 power_up_images = [
@@ -171,6 +174,7 @@ class Jugador(pygame.sprite.Sprite):
         self.rect.centerx = largo // 2
         self.rect.centery = alto - 50
         self.vida = 50
+        self.escudo = 0
 
     def update(self):
         keystate = pygame.key.get_pressed()
@@ -202,6 +206,21 @@ class Jugador(pygame.sprite.Sprite):
         grupo_balas_jugador.add(bala_normal)
         laser_sonido.play()
 
+    def activar_escudo(self):
+        self.escudo = 3
+
+    def dibujar_escudo(self, frame):
+        if self.escudo == 3:
+            escudo_image = escudo3_image
+        elif self.escudo == 2:
+            escudo_image = escudo2_image
+        elif self.escudo == 1:
+            escudo_image = escudo1_image
+        else:
+            return  # No dibujar escudo si no hay capas
+
+        escudo_rect = escudo_image.get_rect(center=(self.rect.centerx, self.rect.centery - 10))
+        frame.blit(escudo_image, escudo_rect.topleft)
 
 class Enemigos(pygame.sprite.Sprite):
     def __init__(self, x, y):
