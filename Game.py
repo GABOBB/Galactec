@@ -219,7 +219,6 @@ class Jugador(pygame.sprite.Sprite):
         else:
             return  # No dibujar escudo si no hay capas
 
-        escudo_rect = escudo_image.get_rect(center=(self.rect.centerx, self.rect.centery - 10))
         frame.blit(escudo_image, escudo_rect.topleft)
 
 class Enemigos(pygame.sprite.Sprite):
@@ -452,12 +451,10 @@ def Game(players):
 
         colicion2 = pygame.sprite.spritecollide(current_player, grupo_balas_enemigos, True)
         for j in colicion2:
-            current_player.vida -= 10
             golpe_sonido.play()
 
         hits = pygame.sprite.spritecollide(current_player, grupo_enemigos, False)
         for hit in hits:
-            current_player.vida -= 50
 
         power_up_hits = pygame.sprite.spritecollide(current_player, grupo_powerups, True)
         for power_up_hit in power_up_hits:
