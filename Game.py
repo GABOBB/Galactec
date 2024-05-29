@@ -246,10 +246,6 @@ class Enemigos(pygame.sprite.Sprite):
 
     def mover(self):
         self.rect.y += 5
-        if self.rect.y > random.randrange(alto / 2) and not self.shoot:
-            self.disparo_enemigo()
-            self.shoot = True
-            
         if self.rect.top > alto:
             self.rect.y = 0
 
@@ -373,6 +369,9 @@ def Game(players):
     power_up_interval = 5
     power_up_start_time = None
 
+    enemigos_que_han_disparado = []
+    last_shot_time = 0  # Añadido para rastrear el tiempo del último disparo
+
     while play:
         clock.tick(fps)
         current_time = time.time()
@@ -385,10 +384,21 @@ def Game(players):
         else:
             score_multiplier = 1
 
+        if len(enemigos_que_han_disparado) == len(grupo_enemigos):
+            enemigos_que_han_disparado = []
+
         for enemigo in grupo_enemigos:
             enemigo.mover()
             if patron_actual == "onda" or patron_actual == "recta":
                 enemigo.mover_horizontal()
+
+        if grupo_enemigos and (current_time - last_shot_time >= 2):  # Solo permitir disparar si han pasado 2 segundos
+            enemigo_disparo = random.choice([e for e in grupo_enemigos if e not in enemigos_que_han_disparado])
+            if not enemigo_disparo.shoot:
+                enemigo_disparo.disparo_enemigo()
+                enemigo_disparo.shoot = True
+                enemigos_que_han_disparado.append(enemigo_disparo)
+                last_shot_time = current_time  # Actualizar el tiempo del último disparo
 
         window.fill(NEGRO)
         for coord in coord_list:
