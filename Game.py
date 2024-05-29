@@ -504,8 +504,10 @@ def Game(players):
         for hit in hits:
             if current_player.escudo > 0:
                 current_player.escudo -= 1
+                score += 10 * score_multiplier
             else:
                 current_player.vida -= 50
+                score += 10 * score_multiplier
 
         power_up_hits = pygame.sprite.spritecollide(current_player, grupo_powerups, True)
         for power_up_hit in power_up_hits:
