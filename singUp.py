@@ -21,6 +21,7 @@ class singup_wndw(tk.Tk):
         SF = 20
         self.PrflPc = None
         self.shiPc = None
+        self.MscDc = None
 
         self.wndw_back = wndw
 
@@ -66,12 +67,15 @@ class singup_wndw(tk.Tk):
         self.SHIPL = Label(self.canvas, bg="black", image=None)
         self.SHIPL.place(x=400, y=300)
 
-        MSC_B = Button(self.canvas, text="Personal Music", bg="green2", fg='black', font=('Arial', SF-6))
-        MSC_B.place(x=400, y=455)
+        MSCsB = Button(self.canvas, text="select song", bg="green2", fg='black', font=('Arial', SF-6), command=lambda: self.MSC(False))
+        MSCsB.place(x=340, y=455)
+
+        MSCmB = Button(self.canvas, text="select music", bg="green2",fg='black', font=('arial',SF-6), command=lambda: self.MSC(True))
+        MSCmB.place(x=500,y=455)
 
         SingUpB = Button(self.canvas, text='SingUp', bg='green1', fg='black',font=('Arial', SF),
                          command=lambda: self.sign_up(email=EmailE.get(), user=UserE.get(), real_name=NameE.get(),
-                                                      password=PwrdE.get(), prflP=self.PrflPc, shiP=self.shiPc))
+                                                      password=PwrdE.get(), prflP=self.PrflPc, shiP=self.shiPc, Mdrctr=self.MscDc))
         SingUpB.place(x=20, y=430), 
 
         ExitB = Button(self.canvas, text='Exit', bg='green1', command=lambda: self.exit(), font=('Arial', SF))
@@ -117,11 +121,16 @@ class singup_wndw(tk.Tk):
             self.SHIPL.config(image=img)
             self.SHIPL.imge = img
             
-    def MSC(self):
-        forlder = Fd.askdirectory(title='select folder of music', initialdir='/')
-        
+    def MSC(self, indicator):
+        if(indicator):
+            file_path = Fd.askdirectory(title='select folder of music', initialdir='/')
+        else:
+            file_path = Fd.askopenfilename(title='Select Ship skin', initialdir='/', filetypes=[("MP3 files", "*.mp3")])
 
-    def sign_up(self, email, user, real_name, password, prflP, shiP):
+        self.MscDc = file_path
+        print(self.MscDc)            
+
+    def sign_up(self, email, user, real_name, password, prflP, shiP, Mdrctr):
         correo_manager = CM.CorreoManager(usuario="mendezariaspablo@gmail.com", password="zswt frhf gewi xzfu")
 
         email = email.strip()
@@ -135,7 +144,7 @@ class singup_wndw(tk.Tk):
             Tiene_N = any(c.isdigit() for c in password)
             Tiene_C = bool(re.search('[^A-Za-z0-9]', password))
             if(len(password) > 6 and Tiene_M and Tiene_m and Tiene_N and Tiene_C):
-                U = UP.User(real_name, user, password, email, prflP, shiP, None)
+                U = UP.User(real_name, user, password, email, prflP, shiP, Mdrctr)
                 jm = JM.JSONManager('usuarios.json')
                 L = jm.cargar_lista(User)
                 print(L)
@@ -187,5 +196,4 @@ class singup_wndw(tk.Tk):
             self.canvas.update()
 
         correo_manager.cerrar_sesion()
-
-x = singup_wndw(None)
+#x = singup_wndw(None)
