@@ -41,6 +41,7 @@ bonus_puntos_image = pygame.image.load('Imagenes/Auxiliares/bonus puntos.png')
 escudo1_image = pygame.image.load('Imagenes/Auxiliares/escudo1capas.png')
 escudo2_image = pygame.image.load('Imagenes/Auxiliares/escudo2capas.png')
 escudo3_image = pygame.image.load('Imagenes/Auxiliares/escudo3capas.png')
+nave_image = pygame.image.load("Imagenes/Jugador/Nave.png")
 
 # Power-up images
 power_up_images = [
@@ -204,6 +205,7 @@ class Jugador(pygame.sprite.Sprite):
         bala_normal = Balas(self.rect.centerx, self.rect.top)
         grupo_jugador.add(bala_normal)
         grupo_balas_jugador.add(bala_normal)
+        laser_sonido.set_volume(0.25)
         laser_sonido.play()
 
     def activar_escudo(self):
@@ -230,9 +232,14 @@ class Enemigos(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        self.shoot = False
 
     def mover(self):
         self.rect.y += 5
+        if self.rect.y > random.randrange(alto / 2) and not self.shoot:
+            self.disparo_enemigo()
+            self.shoot = True
+            
         if self.rect.top > alto:
             self.rect.y = 0
 
@@ -335,6 +342,7 @@ def Game(players):
     score = 0
 
     pygame.display.set_caption("Galatec")
+    pygame.display.set_icon(nave_image)
 
     grupo_jugador.add(current_player)
 
@@ -389,10 +397,8 @@ def Game(players):
                     bonus_puntos = False
                 elif event.key == pygame.K_s and bonus_escudo:
                     current_player.activar_escudo()
-                    bonus_escudo = False  # Deactivate bonus after use
-
-
-
+                    bonus_escudo = False  
+                    
         grupo_jugador.update()
         grupo_enemigos.update()
         grupo_balas_jugador.update()
