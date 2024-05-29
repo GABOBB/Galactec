@@ -118,7 +118,8 @@ class singup_wndw(tk.Tk):
             self.SHIPL.imge = img
             
     def MSC(self):
-        pass
+        forlder = Fd.askdirectory(title='select folder of music', initialdir='/')
+        
 
     def sign_up(self, email, user, real_name, password, prflP, shiP):
         correo_manager = CM.CorreoManager(usuario="mendezariaspablo@gmail.com", password="zswt frhf gewi xzfu")
@@ -187,4 +188,4 @@ class singup_wndw(tk.Tk):
 
         correo_manager.cerrar_sesion()
 
-#x = singup_wndw(None)
+x = singup_wndw(None)
