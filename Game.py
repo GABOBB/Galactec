@@ -42,6 +42,7 @@ escudo1_image = pygame.image.load('Imagenes/Auxiliares/escudo1capas.png')
 escudo2_image = pygame.image.load('Imagenes/Auxiliares/escudo2capas.png')
 escudo3_image = pygame.image.load('Imagenes/Auxiliares/escudo3capas.png')
 nave_image = pygame.image.load("Imagenes/Jugador/Nave.png")
+aura_image = pygame.image.load("Imagenes/Auxiliares/aura puntos dobles.png")
 
 # Power-up images
 power_up_images = [
@@ -224,6 +225,15 @@ class Jugador(pygame.sprite.Sprite):
 
         escudo_rect = escudo_image.get_rect(center=(self.rect.centerx , self.rect.centery - 30))
         frame.blit(escudo_image, escudo_rect.topleft)
+        
+    def dibujar_aura(self, frame, estado):
+        if estado:
+            aura = aura_image
+        else:
+            return
+        aura_rect = aura.get_rect(center=(self.rect.centerx , self.rect.centery))
+        frame.blit(aura, aura_rect.topleft)
+            
 
 class Enemigos(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -423,6 +433,8 @@ def Game(players):
 
         window.blit(marco_poderes, [largo - 207, alto - 60])
         current_player.dibujar_escudo(window)
+        
+        current_player.dibujar_aura(window, power_up_puntos_activo)
 
         if bonus_vidas:
             bonus_vidas_frame = vida_extra_activa
