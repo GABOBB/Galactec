@@ -309,7 +309,9 @@ def reiniciar_enemigos():
 
 
 def cambiar_nivel():
-    global nivel, patron_actual, posiciones_enemigos
+    global nivel, patron_actual, posiciones_enemigos, image_indices, power_up_images
+
+    image_indices = list(range(len(power_up_images)))   
     grupo_enemigos.empty()
 
     if nivel == 1:
