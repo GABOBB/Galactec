@@ -371,10 +371,14 @@ def Game(players):
 
     last_power_up_time = time.time()
     power_up_interval = 5
+    power_up_start_time = None
 
     while play:
         clock.tick(fps)
         current_time = time.time()
+
+        if power_up_puntos_activo and (current_time - power_up_start_time >= 15):
+            power_up_puntos_activo = False
 
         if power_up_puntos_activo:
             score_multiplier = 2
@@ -406,6 +410,7 @@ def Game(players):
                     bonus_vidas = False
                 elif event.key == pygame.K_d and bonus_puntos:
                     power_up_puntos_activo = True
+                    power_up_start_time = current_time
                     bonus_puntos = False
                 elif event.key == pygame.K_s and bonus_escudo:
                     current_player.activar_escudo()
