@@ -288,8 +288,8 @@ class Menu_wndw(tk.Tk):
             Start_Game_B.place(x=60, y=260)
         canvas_user.place(x=X,y=0)
         
-        #FotoL = Label(canvas_user,image=PhotoImage(file=User.get_FT()))
-        #FotoL.place(x=60,y=10)
+        FotoL = Label(canvas_user,image=PhotoImage(file=User.get_FT()))
+        FotoL.place(x=60,y=10)
         
         print(User.get_USR())
         UserL = Label(canvas_user, text=User.get_USR(),bg='black',fg='green1')
