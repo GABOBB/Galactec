@@ -172,7 +172,7 @@ class Menu_wndw(tk.Tk):
         self.FirstP_B = Button(self.canvas, text='First Player',bg='green1',fg='black',command=lambda: self.S_ln())
         self.FirstP_B.place(x=20,y=180)
 
-        self.SecndP_B = Button(self.canvas, text= ' Multiplayer ',bg='green1',fg='black',command=lambda: self.MP_ln())
+        self.SecndP_B = Button(self.canvas, text= 'Second Player',bg='green1',fg='black',command=lambda: self.MP_ln())
         self.SecndP_B.place(x=20,y=220)
         self.SecndP_B.config(state=tk.DISABLED)
         
@@ -189,7 +189,12 @@ class Menu_wndw(tk.Tk):
         self.HELP_B.place(x=650, y=20)
 
         self.mainloop()
-        
+
+    def get_user1(self):
+        return self.user1
+
+    def get_user2(self):
+        return self.user2
         
     def cargarImagen(self,nombre):
         ruta = os.path.join('auxiliar',nombre)
@@ -202,13 +207,13 @@ class Menu_wndw(tk.Tk):
             self.user1 = None
             self.C_U1.destroy()
         self.withdraw()
-        x = LGIN.login_wndw(self)
+        x = LGIN.login_wndw(self, None)
         
     
     def MP_ln(self):
         self.user2 = None
         self.withdraw()
-        LGIN.login_wndw(self)
+        LGIN.login_wndw(self, self.user1.get_USR())
     
     def STNGS(self):
         self.withdraw()
@@ -267,9 +272,7 @@ class Menu_wndw(tk.Tk):
             CDU = c_D_u(self.user1,self, X)
         else:
             CDU = c_D_u(self.user2,self, X)
-        
-        
-    
+   
     def confirmed(self, User):
         
         canvas_user = tk.Canvas(self, bg="Black", width=250, height=300,bd=0, highlightthickness=0)
@@ -288,8 +291,14 @@ class Menu_wndw(tk.Tk):
             Start_Game_B.place(x=60, y=260)
         canvas_user.place(x=X,y=0)
         
-        FotoL = Label(canvas_user,image=PhotoImage(file=User.get_FT()))
-        FotoL.place(x=60,y=10)
+        if(User.get_FT()== None):    
+            pass
+            #Img=PhotoImage(file='D:\TEC\I_24\modelado\Galactec\Imagenes\Auxiliares\porDefecto.jpg')
+        else:
+            Img=PhotoImage(file=User.get_FT())    
+        
+        #FotoL = Label(canvas_user,image=Img)
+        #FotoL.place(x=60,y=10)    
         
         print(User.get_USR())
         UserL = Label(canvas_user, text=User.get_USR(),bg='black',fg='green1')

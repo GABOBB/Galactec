@@ -13,13 +13,14 @@ import os
 
 class login_wndw(tk.Tk):
     
-    def __init__(self, wndw):
+    def __init__(self, wndw, user1):
         super().__init__()
         self.title("Log In")
         self.geometry('250x320')
         self.resizable(width=NO,height=NO)
 
         self.wndw_back = wndw
+        self.checUser = user1
         
         self.canvas = tk.Canvas(self, bg="black", width=250, height=320)
         self.canvas.pack()
@@ -68,13 +69,17 @@ class login_wndw(tk.Tk):
         U = U.strip()
         P = P.strip()
         if(len(U)>>0 and len(P)>>0):  
-            J = Verify_credencials(U,P)
+            J = Verify_credencials(U,P,self.checUser)
             if(J.U_IN != None):
-                self.destroy()
-                self.wndw_back.confirmed(J.U_IN)
-                self.wndw_back.deiconify()
+                if(J.U_IN.get_USR() == self.checUser):
+                    self.MSSG.config(text="Usuario en uso")
+                    self.canvas.update()
+                else:
+                    self.destroy()
+                    self.wndw_back.confirmed(J.U_IN)
+                    self.wndw_back.deiconify()
             else:
-                self.MSSG.config(text="Usuario o contraseña incorrecta")
+                self.MSSG.config(text="Usuario o contraseña no validas ")
                 self.canvas.update()         
         elif(len(U)<=0 or len(P)<=0):
             self.MSSG.config(text="Credenciales incompletas")
@@ -89,22 +94,20 @@ class login_wndw(tk.Tk):
         PM.password_wndw(self)
 
 class Verify_credencials():
-    def __init__(self,User,Psswdr):
+    def __init__(self,User,Psswdr,user1):
         self.List_user = None
         self.U_IN = None
         self.L_U = self.load_users()
-        self.verify(User,Psswdr)
+        self.verify(User,Psswdr,user1)
         
     def load_users(self):
         L = JM.JSONManager('usuarios.json').cargar_lista(User)
-        for l in L:
-            print(l.get_USR())
         return L
-        
-    def verify(self, User, Psswdr):
+    
+    def verify(self, User, Psswdr, user):
         for U in self.L_U:
-            print(U.get_USR() + '-----' + User +";"+U.get_PSSWRD()+'-----'+ Psswdr)
-            if(U.get_USR() == User and U.get_PSSWRD() == Psswdr):
+            
+            if((U.get_USR() == User) and (U.get_PSSWRD() == Psswdr)):   
                 self.U_IN = U
                 return 0
             else:
