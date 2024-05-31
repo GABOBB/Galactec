@@ -19,7 +19,6 @@ largo = screen_info.current_w
 alto = screen_info.current_h - 30
 
 # Crear la ventana en modo pantalla completa
-window = pygame.display.set_mode((largo, alto), pygame.RESIZABLE)
 
 corazon_img = pygame.image.load('Imagenes/Jugador/corazon.png')
 fondo = pygame.image.load("Imagenes/Auxiliares/setting_image.png")
@@ -44,6 +43,7 @@ escudo2_image = pygame.image.load('Imagenes/Auxiliares/escudo2capas.png')
 escudo3_image = pygame.image.load('Imagenes/Auxiliares/escudo3capas.png')
 nave_image = pygame.image.load("Imagenes/Jugador/Nave.png")
 aura_image = pygame.image.load("Imagenes/Auxiliares/aura puntos dobles.png")
+default_profile_image = "Imagenes/Jugador/PlayerDefault.png"
 
 # Power-up images
 power_up_images = [
@@ -83,7 +83,7 @@ def barra_vida(frame, x, y, nivel):
         frame.blit(corazon_img, (i * corazon_img.get_width(), y))
 
 
-def perfiles_jugadores(frame, name1, img1, name2, img2):
+def perfiles_jugadores(win, name1, img1, name2, img2):
     font = pygame.font.Font(None, 36)
     text_frame1 = font.render(name1, True, BLANCO, NEGRO)
     text_rect1 = text_frame1.get_rect()
@@ -96,11 +96,15 @@ def perfiles_jugadores(frame, name1, img1, name2, img2):
         text_rect2.midtop = (screen_info.current_w - 100, 65)
         image2 = pygame.transform.scale(pygame.image.load(img2), (50, 50))
 
-        frame.blit(text_frame1, text_rect1)
-        frame.blit(text_frame2, text_rect2)
-        frame.blit(image1, (0, 50))
-        frame.blit(image2, (screen_info.current_w - 200, 50))
-
+        win.blit(text_frame1, text_rect1)
+        win.blit(text_frame2, text_rect2)
+        win.blit(image1, (0, 50))
+        win.blit(image2, (screen_info.current_w - 200, 50))
+    
+    else:
+        win.blit(text_frame1, text_rect1)
+        win.blit(image1, (0, 50))
+    
 
 def patron_triangular(filas, ancho_fila, max_enemigos=20):
     posiciones = []
@@ -175,10 +179,14 @@ class Jugador(pygame.sprite.Sprite):
     def __init__(self, name, ship_img, profile_img):
         super().__init__()
         self.name = name
-        self.image = pygame.image.load(ship_img).convert_alpha()
+        self.profile_image = profile_img
+        if ship_img == "" or ship_img == None or ship_img == '':
+            ship_img = "Imagenes/Jugador/Nave.png"
+            self.image = pygame.image.load(ship_img).convert_alpha()
+        else:
+            self.image = nave_image
         self.color_fondo = self.image.get_at((0, 0))
         self.image.set_colorkey(self.color_fondo)
-        self.profile_image = profile_img
         pygame.display.set_icon(self.image)
         self.rect = self.image.get_rect()
         self.rect.centerx = largo // 2
@@ -322,7 +330,7 @@ def reiniciar_enemigos():
 
 
 def cambiar_nivel():
-    global nivel, patron_actual, posiciones_enemigos, image_indices, power_up_images
+    global nivel, patron_actual, posiciones_enemigos, image_indices, power_up_images, window
 
     image_indices = list(range(len(power_up_images)))
     grupo_enemigos.empty()
@@ -346,8 +354,9 @@ def cambiar_nivel():
 
 # Ciclo del juego
 def Game(Player1, Player2):
-    global bonus_vidas, bonus_puntos, bonus_escudo, current_player, nivel, patron_actual, posiciones_enemigos, power_up_puntos_activo
-    cambiar_nivel()
+    global bonus_vidas, bonus_puntos, bonus_escudo, current_player, nivel, patron_actual, posiciones_enemigos, power_up_puntos_activo, window
+    window = pygame.display.set_mode((largo, alto), pygame.RESIZABLE)
+    pygame.init()
 
     play = True
     fps = 10
@@ -356,16 +365,12 @@ def Game(Player1, Player2):
 
     pygame.display.set_caption("Galatec")
     pygame.display.set_icon(nave_image)
-
     players = (Jugador(Player1[0], Player1[1], Player1[2]), Jugador(Player2[0], Player2[1], Player2[2]))
     current_player = players[0]
 
     grupo_jugador.add(current_player)
 
-    for pos in posiciones_enemigos:
-        enemigo = Enemigos(pos[0], pos[1])
-        grupo_enemigos.add(enemigo)
-        grupo_jugador.add(enemigo)
+    cambiar_nivel()
 
     coord_list = []
     for i in range(60):
@@ -530,6 +535,7 @@ def Game(Player1, Player2):
         barra_vida(window, largo - 285, 0, current_player.vida)
 
         if players[1] != None:
+            print(players[0].name + "----------------------") 
             perfiles_jugadores(window, players[0].name, players[0].profile_image, players[1].name,
                                players[1].profile_image)
         else:
@@ -540,5 +546,4 @@ def Game(Player1, Player2):
     pygame.quit()
 
 
-Game(("Jugador1", "Imagenes/Jugador/Nave.png", "Imagenes/Jugador/PlayerDefault.png"),
-     ("Jugador2", "Imagenes/Jugador/Nave.png", "Imagenes/Jugador/PlayerDefault.png"))
+#Game(("Jugador1", "", default_profile_image), ("Jugador2", "", default_profile_image))

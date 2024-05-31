@@ -280,8 +280,7 @@ class Menu_wndw(tk.Tk):
             self.C_U1 = canvas_user
             self.user1 = User
             Start_Game_B = Button(canvas_user, text='Start', bg='Green1', fg='black',
-                                  command=lambda: self.play(self.user1.get_NMBR(), self.user1.get_NV(),
-                                                            self.user1.get_FT(), "", "", ""))
+                                  command=lambda: self.play(self.user1.get_NMBR(), self.user1.get_NV(), self.user1.get_FT(), "", "", ""))
             Start_Game_B.place(x=60, y=260)
         else:
             X = 450
@@ -289,9 +288,9 @@ class Menu_wndw(tk.Tk):
             self.user2 = User
             print(self.C_U2 == None)
             Start_Game_B = Button(canvas_user, text='Start', bg='Green1', fg='black',
-                                  command=lambda: self.play(self.user1.get_NMBR(), self.user1.get_NV(),
-                                                            self.user1.get_FT(), self.user2.get_NMBR(),
-                                                            self.user2.get_NV(), self.user2.get_FT()))
+                                  command=lambda: self.play(player1_name=self.user1.get_NMBR(), player1_nv=self.user1.get_NV(),
+                                                            player1_ft=self.user1.get_FT(), player2_name=self.user2.get_NMBR(),
+                                                            player2_nv=self.user2.get_NV(), player2_ft=self.user2.get_FT()))
             Start_Game_B.place(x=60, y=260)
         canvas_user.place(x=X, y=0)
 
