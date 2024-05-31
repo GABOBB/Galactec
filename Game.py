@@ -249,6 +249,10 @@ class Jugador(pygame.sprite.Sprite):
         aura_rect = aura.get_rect(center=(self.rect.centerx, self.rect.centery))
         frame.blit(aura, aura_rect.topleft)
 
+    def reiniciar(self):
+        self.rect.centerx = largo // 2
+        self.rect.centery = alto - 50
+
 
 class Enemigos(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -330,10 +334,12 @@ def reiniciar_enemigos():
 
 
 def cambiar_nivel():
-    global nivel, patron_actual, posiciones_enemigos, image_indices, power_up_images, window
+    global nivel, patron_actual, posiciones_enemigos, image_indices, power_up_images, window, grupo_enemigos, grupo_jugador
 
     image_indices = list(range(len(power_up_images)))
     grupo_enemigos.empty()
+    grupo_jugador.empty()
+    window.fill(NEGRO)
 
     if nivel == 1:
         posiciones_enemigos = patron_triangular(6, 200)
@@ -368,9 +374,9 @@ def Game(Player1, Player2):
     players = (Jugador(Player1[0], Player1[1], Player1[2]), Jugador(Player2[0], Player2[1], Player2[2]))
     current_player = players[0]
 
-    grupo_jugador.add(current_player)
-
     cambiar_nivel()
+
+    grupo_jugador.add(current_player)
 
     coord_list = []
     for i in range(60):
@@ -499,6 +505,8 @@ def Game(Player1, Player2):
         if len(grupo_enemigos) == 0:
             nivel += 1
             cambiar_nivel()
+            current_player.reiniciar()
+            grupo_jugador.add(current_player)
 
         colicion1 = pygame.sprite.groupcollide(grupo_enemigos, grupo_balas_jugador, True, True)
         for i in colicion1:
@@ -546,4 +554,4 @@ def Game(Player1, Player2):
     pygame.quit()
 
 
-#Game(("Jugador1", "", default_profile_image), ("Jugador2", "", default_profile_image))
+Game(("Jugador1", "", default_profile_image), ("Jugador2", "", default_profile_image))
