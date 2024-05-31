@@ -175,7 +175,7 @@ class Jugador(pygame.sprite.Sprite):
     def __init__(self, name, ship_img, profile_img):
         super().__init__()
         self.name = name
-        self.image = pygame.image.load("Imagenes/Jugador/PlayerDefault2.png")
+        self.image = pygame.image.load(ship_img).convert_alpha()
         self.color_fondo = self.image.get_at((0, 0))
         self.image.set_colorkey(self.color_fondo)
         self.profile_image = profile_img
@@ -347,12 +347,7 @@ def cambiar_nivel():
 # Ciclo del juego
 def Game(Player1, Player2):
     global bonus_vidas, bonus_puntos, bonus_escudo, current_player, nivel, patron_actual, posiciones_enemigos, power_up_puntos_activo
-    players = (Jugador(Player1[0], Player1[1], Player1[2]), Jugador(Player2[0], Player2[1], Player2[2]))
-    current_player = players[0]
     cambiar_nivel()
-
-    print("-------------------------------------------", Player1[0], Player1[1], Player1[2],
-          "----------------------------------------------------")
 
     play = True
     fps = 10
@@ -361,6 +356,9 @@ def Game(Player1, Player2):
 
     pygame.display.set_caption("Galatec")
     pygame.display.set_icon(nave_image)
+
+    players = (Jugador(Player1[0], Player1[1], Player1[2]), Jugador(Player2[0], Player2[1], Player2[2]))
+    current_player = players[0]
 
     grupo_jugador.add(current_player)
 
