@@ -264,7 +264,7 @@ class Menu_wndw(tk.Tk):
     
     def play(self, player1, player2):
         self.withdraw()
-        Game.Game(player1, player2)
+        Game.Game((player1, player2))
     
     def STTNGS(self,X):
         self.withdraw()
@@ -280,14 +280,14 @@ class Menu_wndw(tk.Tk):
             X = 250
             self.C_U1 = canvas_user
             self.user1 = User
-            Start_Game_B = Button(canvas_user, text='Start',bg='Green1',fg='black', command=lambda: self.play(User.get_NMBR(), ""))
+            Start_Game_B = Button(canvas_user, text='Start',bg='Green1',fg='black', command=lambda: self.play(self.user1, None))
             Start_Game_B.place(x=60,y=260)
         else:
             X = 450 
             self.C_U2 = canvas_user
             self.user2 = User
             print(self.C_U2 == None)
-            Start_Game_B = Button(canvas_user, text='Start', bg='Green1', fg='black', command=lambda: self.play(self.user1.get_NMBR(), User.get_NMBR()))
+            Start_Game_B = Button(canvas_user, text='Start', bg='Green1', fg='black', command=lambda: self.play(self.user1, self.user2))
             Start_Game_B.place(x=60, y=260)
         canvas_user.place(x=X,y=0)
         
