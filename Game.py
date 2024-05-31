@@ -2,6 +2,7 @@ import math
 import pygame
 import random
 import time
+import User_Profile
 
 # Colores
 BLANCO = (255, 255, 255)
@@ -92,13 +93,13 @@ def perfiles_jugadores(frame, name1, img1, name2, img2):
     if name2 != "":
         text_frame2 = font.render(name2, True, BLANCO, NEGRO)
         text_rect2 = text_frame2.get_rect()
-        text_rect2.midtop = (screen_info.current_w-100, 65)
+        text_rect2.midtop = (screen_info.current_w - 100, 65)
         image2 = pygame.transform.scale(pygame.image.load(img2), (50, 50))
 
         frame.blit(text_frame1, text_rect1)
         frame.blit(text_frame2, text_rect2)
         frame.blit(image1, (0, 50))
-        frame.blit(image2, (screen_info.current_w-200, 50))
+        frame.blit(image2, (screen_info.current_w - 200, 50))
 
 
 def patron_triangular(filas, ancho_fila, max_enemigos=20):
@@ -174,7 +175,7 @@ class Jugador(pygame.sprite.Sprite):
     def __init__(self, name, ship_img, profile_img):
         super().__init__()
         self.name = name
-        self.image = pygame.image.load(ship_img)
+        self.image = pygame.image.load("Imagenes/Jugador/PlayerDefault2.png")
         self.color_fondo = self.image.get_at((0, 0))
         self.image.set_colorkey(self.color_fondo)
         self.profile_image = profile_img
@@ -229,18 +230,17 @@ class Jugador(pygame.sprite.Sprite):
         else:
             return  # No dibujar escudo si no hay capas
 
-
-        escudo_rect = escudo_image.get_rect(center=(self.rect.centerx , self.rect.centery - 30))
+        escudo_rect = escudo_image.get_rect(center=(self.rect.centerx, self.rect.centery - 30))
         frame.blit(escudo_image, escudo_rect.topleft)
-        
+
     def dibujar_aura(self, frame, estado):
         if estado:
             aura = aura_image
         else:
             return
-        aura_rect = aura.get_rect(center=(self.rect.centerx , self.rect.centery))
+        aura_rect = aura.get_rect(center=(self.rect.centerx, self.rect.centery))
         frame.blit(aura, aura_rect.topleft)
-            
+
 
 class Enemigos(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -324,7 +324,7 @@ def reiniciar_enemigos():
 def cambiar_nivel():
     global nivel, patron_actual, posiciones_enemigos, image_indices, power_up_images
 
-    image_indices = list(range(len(power_up_images)))   
+    image_indices = list(range(len(power_up_images)))
     grupo_enemigos.empty()
 
     if nivel == 1:
@@ -345,12 +345,14 @@ def cambiar_nivel():
 
 
 # Ciclo del juego
-def Game(Players):
+def Game(Player1, Player2):
     global bonus_vidas, bonus_puntos, bonus_escudo, current_player, nivel, patron_actual, posiciones_enemigos, power_up_puntos_activo
-
-    players = (Jugador(Players[0].get_NMBR(), Players[0].get_NV, Players[0].get_FT), Jugador(Players[1].get_NMBR(), Players[1].get_NV, Players[1].get_FT))
+    players = (Jugador(Player1[0], Player1[1], Player1[2]), Jugador(Player2[0], Player2[1], Player2[2]))
     current_player = players[0]
     cambiar_nivel()
+
+    print("-------------------------------------------", Player1[0], Player1[1], Player1[2],
+          "----------------------------------------------------")
 
     play = True
     fps = 10
@@ -432,8 +434,8 @@ def Game(Players):
                     bonus_puntos = False
                 elif event.key == pygame.K_s and bonus_escudo:
                     current_player.activar_escudo()
-                    bonus_escudo = False  
-                    
+                    bonus_escudo = False
+
         grupo_jugador.update()
         grupo_enemigos.update()
         grupo_balas_jugador.update()
@@ -456,7 +458,7 @@ def Game(Players):
 
         window.blit(marco_poderes, [largo - 207, alto - 60])
         current_player.dibujar_escudo(window)
-        
+
         current_player.dibujar_aura(window, power_up_puntos_activo)
 
         if bonus_vidas:
@@ -530,7 +532,8 @@ def Game(Players):
         barra_vida(window, largo - 285, 0, current_player.vida)
 
         if players[1] != None:
-            perfiles_jugadores(window, players[0].name, players[0].profile_image, players[1].name, players[1].profile_image)
+            perfiles_jugadores(window, players[0].name, players[0].profile_image, players[1].name,
+                               players[1].profile_image)
         else:
             perfiles_jugadores(window, players[0].name, players[0].profile_image, "", "")
 
@@ -539,4 +542,5 @@ def Game(Players):
     pygame.quit()
 
 
-#Game([Jugador("Player 1", "Imagenes/Jugador/Nave.png", "Imagenes/Jugador/PlayerDefault.png"), Jugador("Player 2", "Imagenes/Jugador/Nave.png", "Imagenes/Jugador/PlayerDefault.png")])
+Game(("Jugador1", "Imagenes/Jugador/Nave.png", "Imagenes/Jugador/PlayerDefault.png"),
+     ("Jugador2", "Imagenes/Jugador/Nave.png", "Imagenes/Jugador/PlayerDefault.png"))

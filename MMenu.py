@@ -154,7 +154,7 @@ class Menu_wndw(tk.Tk):
 
     def __init__(self):
         super().__init__()
-        
+
         self.title('GalaTec')
         self.geometry('711x400')
         self.resizable(width=NO,height=NO)
@@ -261,11 +261,11 @@ class Menu_wndw(tk.Tk):
         else:
             self.user2 = None
             self.C_U2 = None'''
-    
-    def play(self, player1, player2):
+
+    def play(self, player1_name, player1_nv, player1_ft, player2_name, player2_nv, player2_ft):
         self.withdraw()
-        Game.Game((player1, player2))
-    
+        Game.Game((player1_name, player1_nv, player1_ft), (player2_name, player2_nv, player2_ft))
+
     def STTNGS(self,X):
         self.withdraw()
         if(X==250):
@@ -280,14 +280,14 @@ class Menu_wndw(tk.Tk):
             X = 250
             self.C_U1 = canvas_user
             self.user1 = User
-            Start_Game_B = Button(canvas_user, text='Start',bg='Green1',fg='black', command=lambda: self.play(self.user1, None))
+            Start_Game_B = Button(canvas_user, text='Start',bg='Green1',fg='black', command=lambda: self.play(self.user1.get_NMBR(), self.user1.get_NV(), self.user1.get_FT(), "", "", ""))
             Start_Game_B.place(x=60,y=260)
         else:
             X = 450 
             self.C_U2 = canvas_user
             self.user2 = User
             print(self.C_U2 == None)
-            Start_Game_B = Button(canvas_user, text='Start', bg='Green1', fg='black', command=lambda: self.play(self.user1, self.user2))
+            Start_Game_B = Button(canvas_user, text='Start', bg='Green1', fg='black', command=lambda: self.play(self.user1.get_NMBR(), self.user1.get_NV(), self.user1.get_FT(), self.user2.get_NMBR(), self.user2.get_NV(), self.user2.get_FT()))
             Start_Game_B.place(x=60, y=260)
         canvas_user.place(x=X,y=0)
         
