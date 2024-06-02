@@ -16,16 +16,18 @@ class singup_wndw(tk.Tk):
     def __init__(self, wndw):
         super().__init__()
         self.title("Sing Up")
-        self.geometry('650x500')
+        self.geometry('850x600')
         self.resizable(width=NO, height=NO)
         SF = 20
         self.PrflPc = None
         self.shiPc = None
         self.MscDc = None
+        self.last_email = None
+        self.code = None
 
         self.wndw_back = wndw
 
-        self.canvas = tk.Canvas(self, bg="black", width=650, height=500)
+        self.canvas = tk.Canvas(self, bg="black", width=850, height=600)
         self.canvas.pack()
 
         self.MSSG = Label(self.canvas, text="", bg='Black', fg='red', font=('Arial', SF))
@@ -62,24 +64,33 @@ class singup_wndw(tk.Tk):
         self.PrPcL.place(x=400, y=60)
 
         SHIPB = Button(self.canvas, text="ship skin", bg="green2", fg="black", font=('Arial', SF-6), command=lambda: self.SHIP())                  
-        SHIPB.place(x=400, y=250)
+        SHIPB.place(x=600, y=20)
         
         self.SHIPL = Label(self.canvas, bg="black", image=None)
-        self.SHIPL.place(x=400, y=300)
+        self.SHIPL.place(x=600, y=60)
 
         MSCsB = Button(self.canvas, text="select song", bg="green2", fg='black', font=('Arial', SF-6), command=lambda: self.MSC(False))
-        MSCsB.place(x=340, y=455)
+        MSCsB.place(x=340, y=535)
 
         MSCmB = Button(self.canvas, text="select music", bg="green2",fg='black', font=('arial',SF-6), command=lambda: self.MSC(True))
-        MSCmB.place(x=500,y=455)
+        MSCmB.place(x=500,y=535)
+
+        SendEmailCodeB = Button(self.canvas, text='Send Code', bg='green1', fg='black', font=('Arial', SF-6), command=lambda: self.SendCode(EmailE.get()))
+        SendEmailCodeB.place(x=350, y=270)
+
+        EmailCode = Label(self.canvas, text='Email verification code', bg='green2', fg='black', font=('Arial', SF))
+        EmailCode.place(x=10, y=410)
+
+        EmailCodeE = Entry(self.canvas, bg='black', fg='green2', font=('Arial', SF))
+        EmailCodeE.place(x=10, y=450)
 
         SingUpB = Button(self.canvas, text='SingUp', bg='green1', fg='black',font=('Arial', SF),
                          command=lambda: self.sign_up(email=EmailE.get(), user=UserE.get(), real_name=NameE.get(),
-                                                      password=PwrdE.get(), prflP=self.PrflPc, shiP=self.shiPc, Mdrctr=self.MscDc))
-        SingUpB.place(x=20, y=430), 
+                                                      password=PwrdE.get(), prflP=self.PrflPc, shiP=self.shiPc, Mdrctr=self.MscDc, code=EmailCodeE.get()))
+        SingUpB.place(x=20, y=530), 
 
         ExitB = Button(self.canvas, text='Exit', bg='green1', command=lambda: self.exit(), font=('Arial', SF))
-        ExitB.place(x=150, y=430)
+        ExitB.place(x=150, y=530)
 
         self.protocol("WM_DELETE_WINDOW", self.exit)
 
@@ -110,7 +121,6 @@ class singup_wndw(tk.Tk):
     def SHIP(self):
         file_path = Fd.askopenfilename(title='Select Ship skin', initialdir='/', filetypes=[("Image files", "*.png *.jpg *.gif *.jpeg")])
         
-        
         if file_path:
             self.shiPc =file_path
             img = Image.open(file_path)
@@ -130,7 +140,36 @@ class singup_wndw(tk.Tk):
         self.MscDc = file_path
         print(self.MscDc)            
 
-    def sign_up(self, email, user, real_name, password, prflP, shiP, Mdrctr):
+    def SendCode(self, email):
+        correo_manager = CM.CorreoManager(usuario="mendezariaspablo@gmail.com", password="zswt frhf gewi xzfu")
+
+        if len(email) > 0 and '@' in email and '.' in email and email.count('@'):
+            if email != self.last_email:
+                self.code = correo_manager.verificar_correo(email)
+                if self.code:
+                    self.last_email = email
+                    self.MSSG.config(text="Codigo enviado a su correo")
+                    self.canvas.update()
+                else:
+                    self.MSSG.config(text="Correo inválido")
+                    self.canvas.update()
+            else:
+                self.MSSG.config(text="El codigo ya fue enviado a este correo")
+                self.canvas.update()
+        else:
+            self.MSSG.config(text="Correo inválido")
+            self.canvas.update()
+        correo_manager.cerrar_sesion()
+
+    def CodeValidation(self, code):
+        if code == self.code:
+            return True
+        else:
+            self.MSSG.config(text="Codigo de verificacion incorrecto")
+            return False
+        
+
+    def sign_up(self, email, user, real_name, password, prflP, shiP, Mdrctr, code):
         correo_manager = CM.CorreoManager(usuario="mendezariaspablo@gmail.com", password="zswt frhf gewi xzfu")
 
         email = email.strip()
@@ -138,7 +177,7 @@ class singup_wndw(tk.Tk):
         real_name = real_name.strip()
         password = password.strip()
 
-        if len(email) > 0 and len(user) > 0 and len(real_name) > 0 and len(password) > 0:
+        if len(email) > 0 and len(user) > 0 and len(real_name) > 0 and len(password) > 0 and len(code) >= 0:
             Tiene_M = any(c.isupper() for c in password)
             Tiene_m = any(c.islower() for c in password)
             Tiene_N = any(c.isdigit() for c in password)
@@ -158,18 +197,14 @@ class singup_wndw(tk.Tk):
                         Check = 'mail'
                         break
                 if(Check == 'correcto'):
-                    if correo_manager.verificar_correo(email):
+                    if self.CodeValidation(code):
                         self.destroy()
-
                         print(len(L))
                         L += [U]
                         print(len(L))
                         jm.guardar_lista(L)
                         self.wndw_back.deiconify()
-
-                    else:
-                        self.MSSG.config(text="Correo inválido")
-                        self.canvas.update()
+                        correo_manager.cerrar_sesion()
                 elif(Check == 'User'):
                     self.MSSG.config(text="Usuario ya existe")
                     self.canvas.update()

@@ -89,6 +89,8 @@ def perfiles_jugadores(win, name1, img1, name2, img2):
     text_rect1 = text_frame1.get_rect()
     text_rect1.midtop = (100, 65)
     image1 = pygame.transform.scale(pygame.image.load(img1), (50, 50))
+    win.blit(text_frame1, text_rect1)
+    win.blit(image1, (0, 50))
 
     if name2 != "":
         text_frame2 = font.render(name2, True, BLANCO, NEGRO)
@@ -100,10 +102,9 @@ def perfiles_jugadores(win, name1, img1, name2, img2):
         win.blit(text_frame2, text_rect2)
         win.blit(image1, (0, 50))
         win.blit(image2, (screen_info.current_w - 200, 50))
-    
+
     else:
-        win.blit(text_frame1, text_rect1)
-        win.blit(image1, (0, 50))
+        print("Problema al leer el nombre del segundo jugador...")
     
 
 def patron_triangular(filas, ancho_fila, max_enemigos=20):
@@ -339,7 +340,6 @@ def cambiar_nivel():
     image_indices = list(range(len(power_up_images)))
     grupo_enemigos.empty()
     grupo_jugador.empty()
-    window.fill(NEGRO)
 
     if nivel == 1:
         posiciones_enemigos = patron_triangular(6, 200)
@@ -506,6 +506,7 @@ def Game(Player1, Player2):
             nivel += 1
             cambiar_nivel()
             current_player.reiniciar()
+            current_player = players[1]
             grupo_jugador.add(current_player)
 
         colicion1 = pygame.sprite.groupcollide(grupo_enemigos, grupo_balas_jugador, True, True)
