@@ -10,6 +10,8 @@ NEGRO = (0, 0, 0)
 
 pygame.init()
 pygame.mixer.init()
+pygame.joystick.init()
+controller = pygame.joystick.Joystick(0)
 
 # Obtén el tamaño de la pantalla del sistema
 screen_info = pygame.display.Info()
@@ -63,9 +65,14 @@ power_up_puntos_activo = False
 
 # Jugador actual
 current_player = None
+
+# Nivel actual
 nivel = 1
 patron_actual = None
 posiciones_enemigos = None
+
+# Controles
+joystick = []
 
 
 def texto_puntuacion(frame, text, size, x, y):
@@ -197,16 +204,16 @@ class Jugador(pygame.sprite.Sprite):
 
     def update(self):
         keystate = pygame.key.get_pressed()
-        if keystate[pygame.K_LEFT]:
+        if keystate[pygame.K_LEFT] or controller.get_axis(0) < -0.5:
             self.rect.x -= 50
             propulsores_sonido.play()
-        elif keystate[pygame.K_RIGHT]:
+        elif keystate[pygame.K_RIGHT] or controller.get_axis(0) > 0.5:
             self.rect.x += 50
             propulsores_sonido.play()
-        elif keystate[pygame.K_UP]:
+        elif keystate[pygame.K_UP] or controller.get_axis(1) < -0.5:
             self.rect.y -= 50
             propulsores_sonido.play()
-        elif keystate[pygame.K_DOWN]:
+        elif keystate[pygame.K_DOWN] or controller.get_axis(1) > 0.5:
             self.rect.y += 50
             propulsores_sonido.play()
 
@@ -360,7 +367,7 @@ def cambiar_nivel():
 
 # Ciclo del juego
 def Game(Player1, Player2):
-    global bonus_vidas, bonus_puntos, bonus_escudo, current_player, nivel, patron_actual, posiciones_enemigos, power_up_puntos_activo, window
+    global bonus_vidas, bonus_puntos, bonus_escudo, current_player, nivel, patron_actual, posiciones_enemigos, power_up_puntos_activo, window, joystick
     window = pygame.display.set_mode((largo, alto), pygame.RESIZABLE)
     pygame.init()
 
@@ -429,7 +436,7 @@ def Game(Player1, Player2):
                 coord[1] = 0
 
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            if event.type == pygame.QUIT or controller.get_button(6):
                 play = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
@@ -444,6 +451,20 @@ def Game(Player1, Player2):
                 elif event.key == pygame.K_s and bonus_escudo:
                     current_player.activar_escudo()
                     bonus_escudo = False
+            
+            # Bonus activados con el control
+            if controller.get_button(0):
+                current_player.disparo_normal()
+            elif controller.get_button(1) and bonus_vidas:
+                current_player.vida += 10
+                bonus_vidas = False
+            elif controller.get_button(2) and bonus_puntos:
+                power_up_puntos_activo = True
+                power_up_start_time = current_time
+                bonus_puntos = False
+            elif controller.get_button(3) and bonus_escudo:
+                current_player.activar_escudo()
+                bonus_escudo = False
 
         grupo_jugador.update()
         grupo_enemigos.update()
@@ -544,7 +565,6 @@ def Game(Player1, Player2):
         barra_vida(window, largo - 285, 0, current_player.vida)
 
         if players[1] != None:
-            print(players[0].name + "----------------------") 
             perfiles_jugadores(window, players[0].name, players[0].profile_image, players[1].name,
                                players[1].profile_image)
         else:
