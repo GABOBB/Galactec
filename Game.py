@@ -20,7 +20,6 @@ screen_info = pygame.display.Info()
 largo = screen_info.current_w
 alto = screen_info.current_h - 30
 
-# Crear la ventana en modo pantalla completa
 
 corazon_img = pygame.image.load('Imagenes/Jugador/corazon.png')
 fondo = pygame.image.load("Imagenes/Auxiliares/setting_image.png")
@@ -71,8 +70,8 @@ nivel = 1
 patron_actual = None
 posiciones_enemigos = None
 
-# Controles
-joystick = []
+# Pausar juego
+pausado = False
 
 
 def texto_puntuacion(frame, text, size, x, y):
@@ -184,6 +183,7 @@ def patron_linea_recta(max_enemigos):
 
 
 class Jugador(pygame.sprite.Sprite):
+    global pausado
     def __init__(self, name, ship_img, profile_img):
         super().__init__()
         self.name = name
@@ -203,28 +203,29 @@ class Jugador(pygame.sprite.Sprite):
         self.escudo = 0
 
     def update(self):
-        keystate = pygame.key.get_pressed()
-        if keystate[pygame.K_LEFT] or controller.get_axis(0) < -0.5:
-            self.rect.x -= 50
-            propulsores_sonido.play()
-        elif keystate[pygame.K_RIGHT] or controller.get_axis(0) > 0.5:
-            self.rect.x += 50
-            propulsores_sonido.play()
-        elif keystate[pygame.K_UP] or controller.get_axis(1) < -0.5:
-            self.rect.y -= 50
-            propulsores_sonido.play()
-        elif keystate[pygame.K_DOWN] or controller.get_axis(1) > 0.5:
-            self.rect.y += 50
-            propulsores_sonido.play()
+        if not pausado:
+            keystate = pygame.key.get_pressed()
+            if keystate[pygame.K_LEFT] or controller.get_axis(0) < -0.5:
+                self.rect.x -= 50
+                propulsores_sonido.play()
+            elif keystate[pygame.K_RIGHT] or controller.get_axis(0) > 0.5:
+                self.rect.x += 50
+                propulsores_sonido.play()
+            elif keystate[pygame.K_UP] or controller.get_axis(1) < -0.5:
+                self.rect.y -= 50
+                propulsores_sonido.play()
+            elif keystate[pygame.K_DOWN] or controller.get_axis(1) > 0.5:
+                self.rect.y += 50
+                propulsores_sonido.play()
 
-        if self.rect.right > largo:
-            self.rect.right = largo
-        elif self.rect.left < 0:
-            self.rect.left = 0
-        elif self.rect.top < 0:
-            self.rect.top = 0
-        elif self.rect.bottom > alto:
-            self.rect.bottom = alto
+            if self.rect.right > largo:
+                self.rect.right = largo
+            elif self.rect.left < 0:
+                self.rect.left = 0
+            elif self.rect.top < 0:
+                self.rect.top = 0
+            elif self.rect.bottom > alto:
+                self.rect.bottom = alto
 
     def disparo_normal(self):
         bala_normal = Balas(self.rect.centerx, self.rect.top)
@@ -367,9 +368,9 @@ def cambiar_nivel():
 
 # Ciclo del juego
 def Game(Player1, Player2):
-    global bonus_vidas, bonus_puntos, bonus_escudo, current_player, nivel, patron_actual, posiciones_enemigos, power_up_puntos_activo, window, joystick
-    window = pygame.display.set_mode((largo, alto), pygame.RESIZABLE)
+    global bonus_vidas, bonus_puntos, bonus_escudo, current_player, nivel, patron_actual, posiciones_enemigos, power_up_puntos_activo, window, pausado
     pygame.init()
+    window = pygame.display.set_mode((largo, alto), pygame.RESIZABLE)
 
     play = True
     fps = 10
@@ -378,6 +379,7 @@ def Game(Player1, Player2):
 
     pygame.display.set_caption("Galatec")
     pygame.display.set_icon(nave_image)
+
     players = (Jugador(Player1[0], Player1[1], Player1[2]), Jugador(Player2[0], Player2[1], Player2[2]))
     current_player = players[0]
 
@@ -402,29 +404,30 @@ def Game(Player1, Player2):
         clock.tick(fps)
         current_time = time.time()
 
-        if power_up_puntos_activo and (current_time - power_up_start_time >= 15):
-            power_up_puntos_activo = False
+        if not pausado:
+            if power_up_puntos_activo and (current_time - power_up_start_time >= 15):
+                power_up_puntos_activo = False
 
-        if power_up_puntos_activo:
-            score_multiplier = 2
-        else:
-            score_multiplier = 1
+            if power_up_puntos_activo:
+                score_multiplier = 2
+            else:
+                score_multiplier = 1
 
-        if len(enemigos_que_han_disparado) == len(grupo_enemigos):
-            enemigos_que_han_disparado = []
+            if len(enemigos_que_han_disparado) == len(grupo_enemigos):
+                enemigos_que_han_disparado = []
 
-        for enemigo in grupo_enemigos:
-            enemigo.mover()
-            if patron_actual == "onda" or patron_actual == "recta":
-                enemigo.mover_horizontal()
+            for enemigo in grupo_enemigos:
+                enemigo.mover()
+                if patron_actual == "onda" or patron_actual == "recta":
+                    enemigo.mover_horizontal()
 
-        if grupo_enemigos and (current_time - last_shot_time >= 2):  # Solo permitir disparar si han pasado 2 segundos
-            enemigo_disparo = random.choice([e for e in grupo_enemigos if e not in enemigos_que_han_disparado])
-            if not enemigo_disparo.shoot:
-                enemigo_disparo.disparo_enemigo()
-                enemigo_disparo.shoot = True
-                enemigos_que_han_disparado.append(enemigo_disparo)
-                last_shot_time = current_time  # Actualizar el tiempo del último disparo
+            if grupo_enemigos and (current_time - last_shot_time >= 2):  # Solo permitir disparar si han pasado 2 segundos
+                enemigo_disparo = random.choice([e for e in grupo_enemigos if e not in enemigos_que_han_disparado])
+                if not enemigo_disparo.shoot:
+                    enemigo_disparo.disparo_enemigo()
+                    enemigo_disparo.shoot = True
+                    enemigos_que_han_disparado.append(enemigo_disparo)
+                    last_shot_time = current_time  # Actualizar el tiempo del último disparo
 
         window.fill(NEGRO)
         for coord in coord_list:
@@ -438,53 +441,61 @@ def Game(Player1, Player2):
         for event in pygame.event.get():
             if event.type == pygame.QUIT or controller.get_button(6):
                 play = False
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pausado = not pausado
+            if controller.get_button(7):
+                pausado = not pausado
+
+            if not pausado:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        current_player.disparo_normal()
+                    elif event.key == pygame.K_a and bonus_vidas:
+                        current_player.vida += 10
+                        bonus_vidas = False
+                    elif event.key == pygame.K_d and bonus_puntos:
+                        power_up_puntos_activo = True
+                        power_up_start_time = current_time
+                        bonus_puntos = False
+                    elif event.key == pygame.K_s and bonus_escudo:
+                        current_player.activar_escudo()
+                        bonus_escudo = False
+                
+                # Bonus activados con el control
+                if controller.get_button(0):
                     current_player.disparo_normal()
-                elif event.key == pygame.K_a and bonus_vidas:
+                elif controller.get_button(1) and bonus_vidas:
                     current_player.vida += 10
                     bonus_vidas = False
-                elif event.key == pygame.K_d and bonus_puntos:
+                elif controller.get_button(2) and bonus_puntos:
                     power_up_puntos_activo = True
                     power_up_start_time = current_time
                     bonus_puntos = False
-                elif event.key == pygame.K_s and bonus_escudo:
+                elif controller.get_button(3) and bonus_escudo:
                     current_player.activar_escudo()
                     bonus_escudo = False
-            
-            # Bonus activados con el control
-            if controller.get_button(0):
-                current_player.disparo_normal()
-            elif controller.get_button(1) and bonus_vidas:
-                current_player.vida += 10
-                bonus_vidas = False
-            elif controller.get_button(2) and bonus_puntos:
-                power_up_puntos_activo = True
-                power_up_start_time = current_time
-                bonus_puntos = False
-            elif controller.get_button(3) and bonus_escudo:
-                current_player.activar_escudo()
-                bonus_escudo = False
 
-        grupo_jugador.update()
-        grupo_enemigos.update()
-        grupo_balas_jugador.update()
-        grupo_balas_enemigos.update()
-        grupo_powerups.update()
+        if not pausado:
+            grupo_jugador.update()
+            grupo_enemigos.update()
+            grupo_balas_jugador.update()
+            grupo_balas_enemigos.update()
+            grupo_powerups.update()
+
+            if current_time - last_power_up_time >= power_up_interval and image_indices:
+                index = random.choice(image_indices)
+                power_up_image = power_up_images[index]
+                power_up = PowerUp(power_up_image, random.randint(0, largo - power_up_image.get_width()), 0)
+                grupo_powerups.add(power_up)
+                image_indices.remove(index)
+                last_power_up_time = current_time
 
         grupo_jugador.draw(window)
         grupo_enemigos.draw(window)
         grupo_balas_jugador.draw(window)
         grupo_balas_enemigos.draw(window)
         grupo_powerups.draw(window)
-
-        if current_time - last_power_up_time >= power_up_interval and image_indices:
-            index = random.choice(image_indices)
-            power_up_image = power_up_images[index]
-            power_up = PowerUp(power_up_image, random.randint(0, largo - power_up_image.get_width()), 0)
-            grupo_powerups.add(power_up)
-            image_indices.remove(index)
-            last_power_up_time = current_time
 
         window.blit(marco_poderes, [largo - 207, alto - 60])
         current_player.dibujar_escudo(window)
