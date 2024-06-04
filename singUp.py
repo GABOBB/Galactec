@@ -7,6 +7,7 @@ import User_Profile as UP
 import tkinter as tk
 import JsonManager as JM
 import CorreoManager as CM
+import v_ayuda as VA
 import pygame
 import sys
 import os
@@ -87,7 +88,10 @@ class singup_wndw(tk.Tk):
         SingUpB = Button(self.canvas, text='SingUp', bg='green1', fg='black',font=('Arial', SF),
                          command=lambda: self.sign_up(email=EmailE.get(), user=UserE.get(), real_name=NameE.get(),
                                                       password=PwrdE.get(), prflP=self.PrflPc, shiP=self.shiPc, Mdrctr=self.MscDc, code=EmailCodeE.get()))
-        SingUpB.place(x=20, y=530), 
+        SingUpB.place(x=20, y=530),
+
+        self.HELP_B = Button(self.canvas, text='HELP', bg='green1', fg='black', command=lambda: VA.v_help(self), font=('Arial', SF-6))
+        self.HELP_B.place(x=750, y=20)
 
         ExitB = Button(self.canvas, text='Exit', bg='green1', command=lambda: self.exit(), font=('Arial', SF))
         ExitB.place(x=150, y=530)

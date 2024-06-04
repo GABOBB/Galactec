@@ -70,6 +70,14 @@ class c_D_u(tk.Tk):
 
         self.protocol("WM_DELETE_WINDOW", self.exit)
 
+        self.HELP_B = Button(self.canvas, text='HELP', bg='green1', fg='black', command=lambda: VA.v_help(self))
+        self.HELP_B.place(x=120, y=20)
+
+        self.Exit= Button(self.canvas, text='Exit', bg='green1',fg='black', command=lambda: exit(self))
+        self.Exit.place(x=200, y=20)
+
+        #sself.protocol("WM_DELETE_WINDOW", self.exit)
+
         self.mainloop()
 
     def exit(self):
@@ -188,6 +196,8 @@ class Menu_wndw(tk.Tk):
 
         self.HELP_B = Button(self.canvas, text='HELP', bg='green1', fg='black', command=lambda: self.VA())
         self.HELP_B.place(x=650, y=20)
+
+
 
         self.mainloop()
 

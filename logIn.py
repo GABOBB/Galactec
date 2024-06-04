@@ -6,6 +6,7 @@ import JsonManager as JM
 import singUp as SU
 import v_ayuda as VA
 import PasswordManager as PM
+from PIL import Image
 import pygame
 import sys
 import os
