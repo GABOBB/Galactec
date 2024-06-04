@@ -10,8 +10,15 @@ NEGRO = (0, 0, 0)
 
 pygame.init()
 pygame.mixer.init()
+
+# Conectar controll
 pygame.joystick.init()
-controller = pygame.joystick.Joystick(0)
+control_conectado = False
+controller = None
+if pygame.joystick.get_count() > 0:
+    controller = pygame.joystick.Joystick(0)
+    controller.init()
+    control_conectado = True
 
 # Obtén el tamaño de la pantalla del sistema
 screen_info = pygame.display.Info()
@@ -183,7 +190,7 @@ def patron_linea_recta(max_enemigos):
 
 
 class Jugador(pygame.sprite.Sprite):
-    global pausado
+    global pausado, control_conectado, controller
     def __init__(self, name, ship_img, profile_img):
         super().__init__()
         self.name = name
@@ -205,18 +212,32 @@ class Jugador(pygame.sprite.Sprite):
     def update(self):
         if not pausado:
             keystate = pygame.key.get_pressed()
-            if keystate[pygame.K_LEFT] or controller.get_axis(0) < -0.5:
+            if keystate[pygame.K_LEFT]:
                 self.rect.x -= 50
                 propulsores_sonido.play()
-            elif keystate[pygame.K_RIGHT] or controller.get_axis(0) > 0.5:
+            elif keystate[pygame.K_RIGHT]:
                 self.rect.x += 50
                 propulsores_sonido.play()
-            elif keystate[pygame.K_UP] or controller.get_axis(1) < -0.5:
+            elif keystate[pygame.K_UP]:
                 self.rect.y -= 50
                 propulsores_sonido.play()
-            elif keystate[pygame.K_DOWN] or controller.get_axis(1) > 0.5:
+            elif keystate[pygame.K_DOWN]:
                 self.rect.y += 50
                 propulsores_sonido.play()
+            
+            if control_conectado:
+                if controller.get_axis(0) < -0.5:
+                    self.rect.x -= 50
+                    propulsores_sonido.play()
+                elif controller.get_axis(0) > 0.5:
+                    self.rect.x += 50
+                    propulsores_sonido.play()
+                elif controller.get_axis(1) < -0.5:
+                    self.rect.y -= 50
+                    propulsores_sonido.play()
+                elif controller.get_axis(1) > 0.5:
+                    self.rect.y += 50
+                    propulsores_sonido.play()
 
             if self.rect.right > largo:
                 self.rect.right = largo
@@ -439,14 +460,17 @@ def Game(Player1, Player2):
                 coord[1] = 0
 
         for event in pygame.event.get():
-            if event.type == pygame.QUIT or controller.get_button(6):
+            if event.type == pygame.QUIT:
                 play = False
+            if control_conectado:
+                if controller.get_button(6):
+                    play = False
+                if controller.get_button(7):
+                    pausado = not pausado
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     pausado = not pausado
-            if controller.get_button(7):
-                pausado = not pausado
-
+            
             if not pausado:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
@@ -463,18 +487,19 @@ def Game(Player1, Player2):
                         bonus_escudo = False
                 
                 # Bonus activados con el control
-                if controller.get_button(0):
-                    current_player.disparo_normal()
-                elif controller.get_button(1) and bonus_vidas:
-                    current_player.vida += 10
-                    bonus_vidas = False
-                elif controller.get_button(2) and bonus_puntos:
-                    power_up_puntos_activo = True
-                    power_up_start_time = current_time
-                    bonus_puntos = False
-                elif controller.get_button(3) and bonus_escudo:
-                    current_player.activar_escudo()
-                    bonus_escudo = False
+                if control_conectado:
+                    if controller.get_button(0):
+                        current_player.disparo_normal()
+                    elif controller.get_button(1) and bonus_vidas:
+                        current_player.vida += 10
+                        bonus_vidas = False
+                    elif controller.get_button(2) and bonus_puntos:
+                        power_up_puntos_activo = True
+                        power_up_start_time = current_time
+                        bonus_puntos = False
+                    elif controller.get_button(3) and bonus_escudo:
+                        current_player.activar_escudo()
+                        bonus_escudo = False
 
         if not pausado:
             grupo_jugador.update()
@@ -562,6 +587,7 @@ def Game(Player1, Player2):
             else:
                 current_player.vida -= 50
                 score += 10 * score_multiplier
+            
 
         power_up_hits = pygame.sprite.spritecollide(current_player, grupo_powerups, True)
         for power_up_hit in power_up_hits:
