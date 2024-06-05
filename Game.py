@@ -15,6 +15,7 @@ pygame.mixer.init()
 pygame.joystick.init()
 control_conectado = False
 controller = None
+controller_path = "/dev/input/event0"
 if pygame.joystick.get_count() > 0:
     controller = pygame.joystick.Joystick(0)
     controller.init()
@@ -463,9 +464,9 @@ def Game(Player1, Player2):
             if event.type == pygame.QUIT:
                 play = False
             if control_conectado:
-                if controller.get_button(6):
+                if controller.get_button(4):
                     play = False
-                if controller.get_button(7):
+                if controller.get_button(6):
                     pausado = not pausado
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
@@ -573,6 +574,8 @@ def Game(Player1, Player2):
 
         colicion2 = pygame.sprite.spritecollide(current_player, grupo_balas_enemigos, True)
         for j in colicion2:
+            if control_conectado:
+                controller.rumble(1, 1, 300)
             if current_player.escudo > 0:
                 current_player.escudo -= 1
             else:
@@ -581,6 +584,8 @@ def Game(Player1, Player2):
 
         hits = pygame.sprite.spritecollide(current_player, grupo_enemigos, False)
         for hit in hits:
+            if control_conectado:
+                controller.rumble(1, 1, 300)
             if current_player.escudo > 0:
                 current_player.escudo -= 1
                 score += 10 * score_multiplier
