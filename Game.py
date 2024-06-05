@@ -27,7 +27,6 @@ screen_info = pygame.display.Info()
 largo = screen_info.current_w
 alto = screen_info.current_h - 30
 
-
 corazon_img = pygame.image.load('Imagenes/Jugador/corazon.png')
 fondo = pygame.image.load("Imagenes/Auxiliares/setting_image.png")
 laser_sonido = pygame.mixer.Sound("Sonidos/Efectos de sonido/laser.mp3")
@@ -80,7 +79,6 @@ posiciones_enemigos = None
 # Pausar juego
 pausado = False
 
-
 def texto_puntuacion(frame, text, size, x, y):
     font = pygame.font.SysFont("Small Fonts", size, bold=True)
     text_frame = font.render(text, True, BLANCO, NEGRO)
@@ -88,13 +86,11 @@ def texto_puntuacion(frame, text, size, x, y):
     text_rect.midtop = (x, y)
     frame.blit(text_frame, text_rect)
 
-
 def barra_vida(frame, x, y, nivel):
     num_corazones = nivel // 10
 
     for i in range(num_corazones):
         frame.blit(corazon_img, (i * corazon_img.get_width(), y))
-
 
 def perfiles_jugadores(win, name1, img1, name2, img2):
     font = pygame.font.Font(None, 36)
@@ -118,7 +114,6 @@ def perfiles_jugadores(win, name1, img1, name2, img2):
 
     else:
         print("Problema al leer el nombre del segundo jugador...")
-    
 
 def patron_triangular(filas, ancho_fila, max_enemigos=20):
     posiciones = []
@@ -142,7 +137,6 @@ def patron_triangular(filas, ancho_fila, max_enemigos=20):
             break
     return posiciones
 
-
 def patron_onda(max_enemigos):
     posiciones = []
     for i in range(max_enemigos):
@@ -151,7 +145,6 @@ def patron_onda(max_enemigos):
         posiciones.append((x, y))
     return posiciones
 
-
 def patron_lluvia(max_enemigos):
     posiciones = []
     for i in range(max_enemigos):
@@ -159,7 +152,6 @@ def patron_lluvia(max_enemigos):
         y = random.randint(i * -150, 0)  # Ajusta el rango vertical
         posiciones.append((x, y))
     return posiciones
-
 
 def patron_espiral(max_enemigos):
     posiciones = []
@@ -170,7 +162,6 @@ def patron_espiral(max_enemigos):
         y = -radius * math.sin(angle)
         posiciones.append((x, y))
     return posiciones
-
 
 def patron_linea_recta(max_enemigos):
     enemigos_generados = 0
@@ -187,7 +178,6 @@ def patron_linea_recta(max_enemigos):
             enemigos_generados += 1
             posiciones.append((x, y))
     return posiciones
-
 
 class Jugador(pygame.sprite.Sprite):
     global pausado, control_conectado, controller
@@ -283,7 +273,6 @@ class Jugador(pygame.sprite.Sprite):
         self.rect.centerx = largo // 2
         self.rect.centery = alto - 50
 
-
 class Enemigos(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
@@ -292,6 +281,7 @@ class Enemigos(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.shoot = False
+        self.last_powered_shot_time = 0  # Temporizador para el disparo potenciado
 
     def mover(self):
         self.rect.y += 5
@@ -309,6 +299,11 @@ class Enemigos(pygame.sprite.Sprite):
         grupo_balas_enemigos.add(bala)
         laser_sonido_2.play()
 
+    def disparo_potenciado(self):
+        bala_potenciada = DisparoPotenciado(self.rect.centerx, self.rect.bottom)
+        grupo_jugador.add(bala_potenciada)
+        grupo_balas_enemigos.add(bala_potenciada)
+        laser_sonido_2.play()
 
 class Balas(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -323,7 +318,6 @@ class Balas(pygame.sprite.Sprite):
         if self.rect.bottom < 0:
             self.kill()
 
-
 class Balas_enemigos(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
@@ -337,6 +331,18 @@ class Balas_enemigos(pygame.sprite.Sprite):
         if self.rect.bottom > alto:
             self.kill()
 
+class DisparoPotenciado(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = pygame.image.load("Imagenes/Auxiliares/bala_enemigo_cargada.png").convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.centerx = x
+        self.rect.y = y
+
+    def update(self):
+        self.rect.y += 15
+        if self.rect.bottom > alto:
+            self.kill()
 
 class PowerUp(pygame.sprite.Sprite):
     def __init__(self, image, x, y):
@@ -351,17 +357,14 @@ class PowerUp(pygame.sprite.Sprite):
         if self.rect.top > alto:
             self.kill()
 
-
 grupo_jugador = pygame.sprite.Group()
 grupo_enemigos = pygame.sprite.Group()
 grupo_balas_jugador = pygame.sprite.Group()
 grupo_balas_enemigos = pygame.sprite.Group()
 grupo_powerups = pygame.sprite.Group()
 
-
 def reiniciar_enemigos():
     grupo_enemigos.empty()
-
 
 def cambiar_nivel():
     global nivel, patron_actual, posiciones_enemigos, image_indices, power_up_images, window, grupo_enemigos, grupo_jugador
@@ -385,7 +388,6 @@ def cambiar_nivel():
         enemigo = Enemigos(pos[0], pos[1])
         grupo_enemigos.add(enemigo)
         grupo_jugador.add(enemigo)
-
 
 # Ciclo del juego
 def Game(Player1, Player2):
@@ -421,6 +423,9 @@ def Game(Player1, Player2):
     enemigos_que_han_disparado = []
     last_shot_time = 0  # Añadido para rastrear el tiempo del último disparo
 
+    # Lista de enemigos que han disparado el disparo potenciado
+    enemigos_que_han_disparado_potenciado = []
+
     while play:
         clock.tick(fps)
         current_time = time.time()
@@ -449,6 +454,16 @@ def Game(Player1, Player2):
                     enemigo_disparo.shoot = True
                     enemigos_que_han_disparado.append(enemigo_disparo)
                     last_shot_time = current_time  # Actualizar el tiempo del último disparo
+
+            # Disparo potenciado cada 5 segundos, asegurando que una sola nave lo haga a la vez
+            if len(enemigos_que_han_disparado_potenciado) == len(grupo_enemigos):
+                enemigos_que_han_disparado_potenciado = []
+
+            for enemigo in grupo_enemigos:
+                if current_time - enemigo.last_powered_shot_time >= 5 and enemigo not in enemigos_que_han_disparado_potenciado:
+                    enemigo.disparo_potenciado()
+                    enemigos_que_han_disparado_potenciado.append(enemigo)
+                    enemigo.last_powered_shot_time = current_time
 
         window.fill(NEGRO)
         for coord in coord_list:
@@ -587,7 +602,6 @@ def Game(Player1, Player2):
             else:
                 current_player.vida -= 50
                 score += 10 * score_multiplier
-            
 
         power_up_hits = pygame.sprite.spritecollide(current_player, grupo_powerups, True)
         for power_up_hit in power_up_hits:
@@ -610,6 +624,5 @@ def Game(Player1, Player2):
         pygame.display.flip()
 
     pygame.quit()
-
 
 Game(("Jugador1", "", default_profile_image), ("Jugador2", "", default_profile_image))
