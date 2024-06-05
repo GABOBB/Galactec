@@ -29,31 +29,31 @@ class login_wndw(tk.Tk):
         self.MSSG = Label(self.canvas,text="",bg='Black',fg='red')
         self.MSSG.place(x=15,y=10)
         
-        UserL=Label(self.canvas, text='Username:',bg='green2',fg='Black')
+        UserL=Label(self.canvas, text='Username:',bg='green',fg='white')
         UserL.place(x=15,y=50)
 
         UserE=Entry(self.canvas,bg='black',fg='green2')
         UserE.place(x=10,y=90)
 
-        Pwrdl=Label(self.canvas, text='Password:',bg='green1',fg='black')
+        Pwrdl=Label(self.canvas, text='Password:',bg='green',fg='white')
         Pwrdl.place(x=10,y=140)
 
         PwrdE=Entry(self.canvas,bg='black',fg='green2')
         PwrdE.place(x=10,y=180)
 
-        LoginB = Button(self.canvas, text= 'LogIn',bg='green1',fg='black',command=lambda: self.try_logIn(UserE.get(),PwrdE.get()))
+        LoginB = Button(self.canvas, text= 'LogIn',bg='green',fg='white',command=lambda: self.try_logIn(UserE.get(),PwrdE.get()))
         LoginB.place(x=20,y=240)
         
-        cancel = Button(self.canvas,text='Exit',bg='green1',command=lambda: self.exit())
+        cancel = Button(self.canvas,text='Exit',bg='green',fg = 'white' ,command=lambda: self.exit())
         cancel.place(x=80,y=240)
         
-        RgstrB = Button(self.canvas, text='Dont have an account yet?',bg='black',fg='green1',bd=0, command=lambda: self.Sing_Up())
+        RgstrB = Button(self.canvas, text='Dont have an account yet?',bg='black',fg='green',bd=0, command=lambda: self.Sing_Up())
         RgstrB.place(x=10,y=200)
 
-        FrgtB = Button(self.canvas, text='Forgot your password?',bg='black',fg='green1',bd=0, command=lambda: self.FrgtP())
+        FrgtB = Button(self.canvas, text='Forgot your password?',bg='black',fg='green',bd=0, command=lambda: self.FrgtP())
         FrgtB.place(x=10,y=280)
 
-        self.HELP_B = Button(self.canvas, text='HELP', bg='green1', fg='black', command=lambda: VA.v_help(self))
+        self.HELP_B = Button(self.canvas, text='HELP', bg='green', fg='white', command=lambda: VA.v_help(self))
         self.HELP_B.place(x=200, y=20)
         
         self.protocol("WM_DELETE_WINDOW", self.exit)

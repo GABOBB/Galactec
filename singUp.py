@@ -31,69 +31,79 @@ class singup_wndw(tk.Tk):
         self.canvas = tk.Canvas(self, bg="black", width=850, height=600)
         self.canvas.pack()
 
-        self.MSSG = Label(self.canvas, text="", bg='Black', fg='red', font=('Arial', SF))
+        SF = 12  # Tamaño de fuente común
+
+        self.MSSG = Label(self.canvas, text="", bg='black', fg='red', font=('Arial', SF))
         self.MSSG.place(x=10, y=10)
 
-        NameL = Label(self.canvas, text='Real name:', bg='green2', fg='Black', font=('Arial', SF))
+        NameL = Label(self.canvas, text='Real name:', bg='green', fg='white', font=('Arial', SF))
         NameL.place(x=10, y=50)
 
-        NameE = Entry(self.canvas, bg='black', fg='green2', font=('Arial', SF))
+        NameE = Entry(self.canvas, bg='black', fg='white', font=('Arial', SF))
         NameE.place(x=10, y=90)
 
-        UserL = Label(self.canvas, text='Username:', bg='green2', fg='Black', font=('Arial', SF))
+        UserL = Label(self.canvas, text='Username:', bg='green', fg='white', font=('Arial', SF))
         UserL.place(x=10, y=140)
 
-        UserE = Entry(self.canvas, bg='black', fg='green2', font=('Arial', SF))
+        UserE = Entry(self.canvas, bg='black', fg='white', font=('Arial', SF))
         UserE.place(x=10, y=180)
 
-        EmailL = Label(self.canvas, text='Email:', bg='green2', fg='Black', font=('Arial', SF))
+        EmailL = Label(self.canvas, text='Email:', bg='green', fg='white', font=('Arial', SF))
         EmailL.place(x=10, y=230)
 
-        EmailE = Entry(self.canvas, bg='black', fg='green2', font=('Arial', SF))
+        EmailE = Entry(self.canvas, bg='black', fg='white', font=('Arial', SF))
         EmailE.place(x=10, y=270)
 
-        Pwrdl = Label(self.canvas, text='Password:', bg='green1', fg='black', font=('Arial', SF))
+        Pwrdl = Label(self.canvas, text='Password:', bg='green', fg='white', font=('Arial', SF))
         Pwrdl.place(x=10, y=320)
 
-        PwrdE = Entry(self.canvas, bg='black', fg='green2', font=('Arial', SF))
+        PwrdE = Entry(self.canvas, bg='black', fg='white', font=('Arial', SF))
         PwrdE.place(x=10, y=360)
 
-        PrPcB = Button(self.canvas, text='Profile Picture', bg='green2', fg='black', font=('Arial', SF-6), command=lambda: self.PrPc())
+        PrPcB = Button(self.canvas, text='Profile Picture', bg='green', fg='white', font=('Helvetica', SF),
+                       command=lambda: self.PrPc())
         PrPcB.place(x=400, y=20)
 
         self.PrPcL = Label(self.canvas, bg="black", image=None)
         self.PrPcL.place(x=400, y=60)
 
-        SHIPB = Button(self.canvas, text="ship skin", bg="green2", fg="black", font=('Arial', SF-6), command=lambda: self.SHIP())                  
+        SHIPB = Button(self.canvas, text="Ship Skin", bg="green", fg="white", font=('Helvetica', SF),
+                       command=lambda: self.SHIP())
         SHIPB.place(x=600, y=20)
-        
+
         self.SHIPL = Label(self.canvas, bg="black", image=None)
         self.SHIPL.place(x=600, y=60)
 
-        MSCsB = Button(self.canvas, text="select song", bg="green2", fg='black', font=('Arial', SF-6), command=lambda: self.MSC(False))
+        MSCsB = Button(self.canvas, text="Select Song", bg="green", fg='white', font=('Helvetica', SF),
+                       command=lambda: self.MSC(False))
         MSCsB.place(x=340, y=535)
 
-        MSCmB = Button(self.canvas, text="select music", bg="green2",fg='black', font=('arial',SF-6), command=lambda: self.MSC(True))
-        MSCmB.place(x=500,y=535)
+        MSCmB = Button(self.canvas, text="Select Music", bg="green", fg='white', font=('Helvetica', SF),
+                       command=lambda: self.MSC(True))
+        MSCmB.place(x=500, y=535)
 
-        SendEmailCodeB = Button(self.canvas, text='Send Code', bg='green1', fg='black', font=('Arial', SF-6), command=lambda: self.SendCode(EmailE.get()))
+        SendEmailCodeB = Button(self.canvas, text='Send Code', bg='green', fg='white', font=('Helvetica', SF),
+                                command=lambda: self.SendCode(EmailE.get()))
         SendEmailCodeB.place(x=350, y=270)
 
-        EmailCode = Label(self.canvas, text='Email verification code', bg='green2', fg='black', font=('Arial', SF))
+        EmailCode = Label(self.canvas, text='Email Verification Code', bg='green', fg='white', font=('Arial', SF))
         EmailCode.place(x=10, y=410)
 
-        EmailCodeE = Entry(self.canvas, bg='black', fg='green2', font=('Arial', SF))
+        EmailCodeE = Entry(self.canvas, bg='black', fg='white', font=('Arial', SF))
         EmailCodeE.place(x=10, y=450)
 
-        SingUpB = Button(self.canvas, text='SingUp', bg='green1', fg='black',font=('Arial', SF),
+        SingUpB = Button(self.canvas, text='SignUp', bg='green', fg='white', font=('Helvetica', SF),
                          command=lambda: self.sign_up(email=EmailE.get(), user=UserE.get(), real_name=NameE.get(),
-                                                      password=PwrdE.get(), prflP=self.PrflPc, shiP=self.shiPc, Mdrctr=self.MscDc, code=EmailCodeE.get()))
-        SingUpB.place(x=20, y=530),
+                                                      password=PwrdE.get(), prflP=self.PrflPc, shiP=self.shiPc,
+                                                      Mdrctr=self.MscDc, code=EmailCodeE.get()))
+        SingUpB.place(x=20, y=530)
 
-        self.HELP_B = Button(self.canvas, text='HELP', bg='green1', fg='black', command=lambda: VA.v_help(self), font=('Arial', SF-6))
+        self.HELP_B = Button(self.canvas, text='HELP', bg='green', fg='white', command=lambda: VA.v_help(self),
+                             font=('Arial', SF))
         self.HELP_B.place(x=750, y=20)
 
-        ExitB = Button(self.canvas, text='Exit', bg='green1', command=lambda: self.exit(), font=('Arial', SF))
+        ExitB = Button(self.canvas, text='Exit', bg='green', fg='white', command=lambda: self.exit(),
+                       font=('Arial', SF))
         ExitB.place(x=150, y=530)
 
         self.protocol("WM_DELETE_WINDOW", self.exit)

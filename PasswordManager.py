@@ -8,7 +8,7 @@ import random
 import pygame
 import sys
 import os
-
+import v_ayuda as VA
 
 class recover_password_wndw(tk.Tk):
     def __init__(self, code, wndw, User):
@@ -46,6 +46,9 @@ class recover_password_wndw(tk.Tk):
 
         ExitB = Button(self.canvas, text='Exit', bg='green1', command=lambda: self.exit())
         ExitB.place(x=140, y=230)
+
+        self.HELP_B = Button(self.canvas, text='HELP', bg='green1', fg='black', command=lambda: VA.v_help(self))
+        self.HELP_B.place(x=200, y=20)
 
         self.protocol("WM_DELETE_WINDOW", self.exit)
 
@@ -94,17 +97,20 @@ class password_wndw(tk.Tk):
         self.MSSG = Label(self.canvas, text="", bg='Black', fg='red')
         self.MSSG.place(x=10, y=10)
 
-        UserL = Label(self.canvas, text='User:', bg='green2', fg='Black')
+        UserL = Label(self.canvas, text='User:', bg='green', fg='white')
         UserL.place(x=10, y=50)
 
-        UserE = Entry(self.canvas, bg='black', fg='green2')
+        UserE = Entry(self.canvas, bg='black', fg='green')
         UserE.place(x=10, y=90)
 
-        SendCodepB = Button(self.canvas, text='Send Code to email', bg='green1', fg='black',
+        SendCodepB = Button(self.canvas, text='Send Code to email', bg='green', fg='white',
                             command=lambda: self.find_user(UserE.get()))
         SendCodepB.place(x=20, y=140)
 
-        ExitB = Button(self.canvas, text='Exit', bg='green1', command=lambda: self.exit())
+        self.HELP_B = Button(self.canvas, text='HELP', bg='green', fg='white', command=lambda: VA.v_help(self))
+        self.HELP_B.place(x=200, y=20)
+
+        ExitB = Button(self.canvas, text='Exit', bg='green',fg='white', command=lambda: self.exit())
         ExitB.place(x=140, y=140)
 
         self.protocol("WM_DELETE_WINDOW", self.exit)

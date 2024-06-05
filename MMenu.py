@@ -30,50 +30,50 @@ class c_D_u(tk.Tk):
         self.wndwB = wndwB
         self.indcdr = indicador
 
-        NameL = Label(self.canvas, text='Real name:', bg='green2', fg='Black')
+        NameL = Label(self.canvas, text='Real name:', bg='green', fg='white')
         NameL.place(x=10, y=50)
 
-        NameE = Entry(self.canvas, bg='black', fg='green2')
+        NameE = Entry(self.canvas, bg='white', fg='green')
         NameE.insert(0, self.old_user.get_NMBR())
         NameE.place(x=10, y=90)
 
-        UserL = Label(self.canvas, text='Username:', bg='green2', fg='Black')
+        UserL = Label(self.canvas, text='Username:', bg='green', fg='white')
         UserL.place(x=10, y=140)
 
         UserE = Entry(self.canvas, bg='black', fg='green2')
         UserE.insert(0, self.old_user.get_USR())
         UserE.place(x=10, y=180)
 
-        EmailL = Label(self.canvas, text='Email:', bg='green2', fg='Black')
+        EmailL = Label(self.canvas, text='Email:', bg='green', fg='white')
         EmailL.place(x=10, y=230)
 
-        EmailE = Entry(self.canvas, bg='black', fg='green2')
+        EmailE = Entry(self.canvas, bg='white', fg='green')
         EmailE.insert(0, self.old_user.get_CRR())
         EmailE.place(x=10, y=270)
 
-        Pwrdl = Label(self.canvas, text='Password:', bg='green1', fg='black')
+        Pwrdl = Label(self.canvas, text='Password:', bg='green', fg='white')
         Pwrdl.place(x=10, y=320)
 
-        PwrdE = Entry(self.canvas, bg='black', fg='green2')
+        PwrdE = Entry(self.canvas, bg='white', fg='green')
         PwrdE.insert(0, self.old_user.get_PSSWRD())
         PwrdE.place(x=10, y=360)
 
-        change_B = Button(self.canvas, text='guardar cambios', bg='green1', fg='black',
+        change_B = Button(self.canvas, text='Guardar cambios', bg='green', fg='white',
                           command=lambda: self.reescribir_D(NameE.get(),
                                                             UserE.get(),
                                                             EmailE.get(),
                                                             PwrdE.get()))
-        change_B.place(x=15, y=460)
+        change_B.place(x=15, y=410)
 
         self.MSSGL = Label(self.canvas, text='', fg='red', bg='black', bd=0)
         self.MSSGL.place(x=10, y=10)
 
         self.protocol("WM_DELETE_WINDOW", self.exit)
 
-        self.HELP_B = Button(self.canvas, text='HELP', bg='green1', fg='black', command=lambda: VA.v_help(self))
+        self.HELP_B = Button(self.canvas, text='HELP',bg='green', fg='white', font=('Helvetica', 12, 'bold') ,command=lambda: VA.v_help(self))
         self.HELP_B.place(x=120, y=20)
 
-        self.Exit= Button(self.canvas, text='Exit', bg='green1',fg='black', command=lambda: exit(self))
+        self.Exit= Button(self.canvas, text='Exit', bg='green', fg='white', font=('Helvetica', 12, 'bold'), command=lambda: exit(self))
         self.Exit.place(x=200, y=20)
 
         #sself.protocol("WM_DELETE_WINDOW", self.exit)
@@ -178,25 +178,32 @@ class Menu_wndw(tk.Tk):
         self.canvas = tk.Canvas(self, bg="black", width=711, height=400, bd=0, highlightthickness=0)
         self.canvas.pack()
 
-        self.FirstP_B = Button(self.canvas, text='First Player', bg='green1', fg='black', command=lambda: self.S_ln())
-        self.FirstP_B.place(x=20, y=180)
+        self.FirstP_B = Button(self.canvas, text='First Player', bg='green', fg='white', font=('Helvetica', 12, 'bold'),
+                               command=lambda: self.S_ln())
+        self.FirstP_B.place(x=20, y=180, width=120, height=30)
 
-        self.SecndP_B = Button(self.canvas, text='Second Player', bg='green1', fg='black', command=lambda: self.MP_ln())
-        self.SecndP_B.place(x=20, y=220)
+        self.SecndP_B = Button(self.canvas, text='Second Player', bg='green', fg='white',
+                               font=('Helvetica', 12, 'bold'),
+                               command=lambda: self.MP_ln())
+        self.SecndP_B.place(x=20, y=220, width=120, height=30)
         self.SecndP_B.config(state=tk.DISABLED)
 
-        self.Sttngs_B = Button(self.canvas, text='Game Settings', bg='green1', fg='black', command=lambda: self.STNGS())
-        self.Sttngs_B.place(x=20, y=260)
+        self.Sttngs_B = Button(self.canvas, text='Game Settings', bg='green', fg='white',
+                               font=('Helvetica', 12, 'bold'),
+                               command=lambda: self.STNGS())
+        self.Sttngs_B.place(x=20, y=260, width=120, height=30)
 
-        self.PodioG_B = Button(self.canvas, text='Podio', bg='green1', fg='black', command=lambda: self.PD())
-        self.PodioG_B.place(x=20, y=300)
+        self.PodioG_B = Button(self.canvas, text='Podio', bg='green', fg='white', font=('Helvetica', 12, 'bold'),
+                               command=lambda: self.PD())
+        self.PodioG_B.place(x=20, y=300, width=120, height=30)
 
-        self.ExitGm_B = Button(self.canvas, text='Exit Game', bg='green1', fg='black', command=lambda: self.destroy())
-        self.ExitGm_B.place(x=20, y=340)
+        self.ExitGm_B = Button(self.canvas, text='Exit Game', bg='green', fg='white', font=('Helvetica', 12, 'bold'),
+                               command=lambda: self.destroy())
+        self.ExitGm_B.place(x=20, y=340, width=120, height=30)
 
-        self.HELP_B = Button(self.canvas, text='HELP', bg='green1', fg='black', command=lambda: self.VA())
-        self.HELP_B.place(x=650, y=20)
-
+        self.HELP_B = Button(self.canvas, text='HELP', bg='green', fg='white', font=('Helvetica', 12, 'bold'),
+                             command=lambda: self.VA())
+        self.HELP_B.place(x=650, y=20, width=40, height=40)
 
 
         self.mainloop()
@@ -289,9 +296,11 @@ class Menu_wndw(tk.Tk):
             X = 250
             self.C_U1 = canvas_user
             self.user1 = User
-            Start_Game_B = Button(canvas_user, text='Start', bg='Green1', fg='black',
-                                  command=lambda: self.play(self.user1.get_NMBR(), self.user1.get_NV(), self.user1.get_FT(), "", "", ""))
-            Start_Game_B.place(x=60, y=260)
+            Start_Game_B = Button(self.canvas, text='Start', bg='green', fg='white', font=('Helvetica', 12, 'bold'),
+                                  command=lambda: self.play(self.user1.get_NMBR(), self.user1.get_NV(),
+                                                            self.user1.get_FT(), "", "", ""))
+            Start_Game_B.place(x=550, y=260, width=100, height=30)
+
         else:
             X = 450
             self.C_U2 = canvas_user
@@ -314,22 +323,22 @@ class Menu_wndw(tk.Tk):
         #FotoL.place(x=60,y=10)    
 
         print(User.get_USR())
-        UserL = Label(canvas_user, text=User.get_USR(), bg='black', fg='green1')
+        UserL = Label(canvas_user, text=User.get_USR(), bg='white', fg='green')
         UserL.place(x=60, y=140)
 
         print(User.get_NMBR())
-        NameL = Label(canvas_user, text=User.get_NMBR(), bg='black', fg='green1')
+        NameL = Label(canvas_user, text=User.get_NMBR(), bg='white', fg='green')
         NameL.place(x=60, y=170)
 
         print(User.get_CRR())
-        MailL = Label(canvas_user, text=User.get_CRR(), bg='black', fg='green1')
+        MailL = Label(canvas_user, text=User.get_CRR(), bg='white', fg='green')
         MailL.place(x=60, y=200)
 
-        Log_Out_B = Button(canvas_user, text='Log Out', fg='black', bg='green1',
+        Log_Out_B = Button(canvas_user, text='Log Out', fg='green', bg='white',
                            command=lambda: self.Log_out(X, canvas_user), bd=0)
         Log_Out_B.place(x=60, y=230)
 
-        settings_B = Button(canvas_user, text='user settings', fg='green1', bg='black', command=lambda: self.STTNGS(X),
+        settings_B = Button(canvas_user, text='User settings', fg='green', bg='white', command=lambda: self.STTNGS(X),
                             bd=0)
         settings_B.place(x=60, y=280)
 
