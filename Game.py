@@ -82,7 +82,7 @@ current_player = None
 
 # Nivel actual
 nivel = 1
-turno = None
+turno = True
 primera = True
 patron_actual = None
 enemigos_muertos = 0
@@ -104,22 +104,19 @@ def texto_nivel(frame, nivel, x, y):
         text_frame = font.render(f"Nivel: {nivel}", True, BLANCO, NEGRO)
     else:
         text_frame = font.render("Gracias por jugar", True, BLANCO, NEGRO)
+        y += 500
     text_rect = text_frame.get_rect()
     text_rect.midtop = (x, y)
     frame.blit(text_frame, text_rect)
 
-def texto_turno(frame, jugador1, jugador2, jugador0):
-    global primera, turno
+def texto_turno(frame, jugador0):
+    global primera
     font = pygame.font.SysFont("Small Fonts", 36, bold=True)
 
     if primera:
-        if jugador0 == jugador1:
-            turno = not turno
         text_frame = font.render(f"El jugador {jugador0} iniciará la partida", True, BLANCO, NEGRO)
-    elif turno:
-        text_frame = font.render(f"Turno de: {jugador1}", True, BLANCO, NEGRO)
     else:
-        text_frame = font.render(f"Turno de: {jugador2}", True, BLANCO, NEGRO)
+        text_frame = font.render(f"Turno de: {jugador0}", True, BLANCO, NEGRO)
     text_rect = text_frame.get_rect()
     text_rect.midtop = (largo//4, 50)
     frame.blit(text_frame, text_rect)
@@ -135,7 +132,11 @@ def perfiles_jugadores(win, name1, img1, name2, img2):
     text_frame1 = font.render(name1, True, BLANCO, NEGRO)
     text_rect1 = text_frame1.get_rect()
     text_rect1.midtop = (100, 65)
-    image1 = pygame.transform.scale(pygame.image.load(img1), (50, 50))
+    if img1 == "" or img1 == None:
+        image1 = pygame.transform.scale(pygame.image.load(default_profile_image), (50, 50))
+    else:
+        image1 = pygame.transform.scale(pygame.image.load(img1), (50, 50))
+
     win.blit(text_frame1, text_rect1)
     win.blit(image1, (0, 50))
 
@@ -143,7 +144,10 @@ def perfiles_jugadores(win, name1, img1, name2, img2):
         text_frame2 = font.render(name2, True, BLANCO, NEGRO)
         text_rect2 = text_frame2.get_rect()
         text_rect2.midtop = (screen_info.current_w - 100, 65)
-        image2 = pygame.transform.scale(pygame.image.load(img2), (50, 50))
+        if img2 == "" or img2 == None:
+            image2 = pygame.transform.scale(pygame.image.load(default_profile_image), (50, 50))
+        else:
+            image2 = pygame.transform.scale(pygame.image.load(img2), (50, 50))
 
         win.blit(text_frame1, text_rect1)
         win.blit(text_frame2, text_rect2)
@@ -223,11 +227,13 @@ class Jugador(pygame.sprite.Sprite):
         super().__init__()
         self.name = name
         self.profile_image = profile_img
-        if ship_img == "" or ship_img == None or ship_img == '':
+        if ship_img == "" or ship_img == None:
             ship_img = "Imagenes/Jugador/Nave.png"
             self.image = pygame.image.load(ship_img).convert_alpha()
+            self.image = pygame.transform.scale(self.image, (85, 85))
         else:
-            self.image = nave_image
+            self.image = pygame.image.load(ship_img).convert_alpha()
+            self.image = pygame.transform.scale(self.image, (85, 85))   
         self.color_fondo = self.image.get_at((0, 0))
         self.image.set_colorkey(self.color_fondo)
         pygame.display.set_icon(self.image)
@@ -306,10 +312,6 @@ class Jugador(pygame.sprite.Sprite):
             return
         aura_rect = aura.get_rect(center=(self.rect.centerx, self.rect.centery))
         frame.blit(aura, aura_rect.topleft)
-
-    def reiniciar(self):
-        self.rect.centerx = largo // 2
-        self.rect.centery = alto - 50
 
 class Enemigos(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -411,7 +413,6 @@ def cambiar_nivel():
 
     image_indices = list(range(len(power_up_images)))
     grupo_enemigos.empty()
-    grupo_jugador.empty()
 
     if nivel == 1:
         posiciones_enemigos = patron_triangular(6, 200)
@@ -483,9 +484,6 @@ def Game(Player1, Player2):
             if len(enemigos_que_han_disparado) == len(grupo_enemigos):
                 enemigos_que_han_disparado = []
                 
-            if len(enemigos_que_han_disparado_potenciado) == len(grupo_enemigos):
-                enemigos_que_han_disparado_potenciado = []
-
             if len(enemigos_que_han_disparado_potenciado) == len(grupo_enemigos):
                 enemigos_que_han_disparado_potenciado = []
 
@@ -614,13 +612,14 @@ def Game(Player1, Player2):
         if current_player.vida <= 0:
             if current_player == players[0]:
                 current_player = players[1]
-            else:
+            elif current_player == players[1]:
                 current_player = players[0]
+            grupo_jugador.empty()
             current_player.rect.centerx = largo // 2
             current_player.rect.centery = alto - 50
             current_player.vida = 50
-            turno = not turno
             primera = False
+            grupo_jugador.add(current_player)
             reiniciar_enemigos()
         
         if nivel > 3:
@@ -630,9 +629,6 @@ def Game(Player1, Player2):
         elif len(grupo_enemigos) == 0:
             nivel += 1
             cambiar_nivel()
-            current_player.reiniciar()
-            current_player = players[1]
-            grupo_jugador.add(current_player)
             
 
         # Colicion entre balas y enemigos
@@ -649,7 +645,7 @@ def Game(Player1, Player2):
             if current_player.escudo > 0:
                 current_player.escudo -= 1
             else:
-                current_player.vida -= 10
+                current_player.vida -= 5
             golpe_sonido.play()
             
         # Colicion entre jugador y balas cargadas enemigos
@@ -691,7 +687,7 @@ def Game(Player1, Player2):
         texto_puntuacion(window, ("SCORE: " + str(score) + " "), 30, largo - 85, 2)
         barra_vida(window, largo - 285, 0, current_player.vida)
         texto_nivel(window, nivel, largo//2 , 2)
-        texto_turno(window, players[0].name, players[1].name, current_player.name)
+        texto_turno(window, current_player.name)
 
         if players[1] != None:
             perfiles_jugadores(window, players[0].name, players[0].profile_image, players[1].name,
@@ -703,4 +699,4 @@ def Game(Player1, Player2):
 
     pygame.quit()
 
-Game(("Jugador1", "", default_profile_image), ("Jugador2", "", default_profile_image))
+Game(("Jugador1", "", ""), ("Jugador2", "", ""))
