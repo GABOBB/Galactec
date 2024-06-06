@@ -705,4 +705,4 @@ def Game(Player1, Player2):
 
     pygame.quit()
 
-Game(("Jugador1", "", ""), ("Jugador2", "", ""))
+#Game(("Jugador1", "", ""), ("Jugador2", "", ""))
