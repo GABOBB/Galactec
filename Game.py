@@ -28,6 +28,13 @@ screen_info = pygame.display.Info()
 largo = screen_info.current_w
 alto = screen_info.current_h - 30
 
+
+# Cargar música de fondo
+pygame.mixer.music.load("musica.mp3")
+pygame.mixer.music.set_volume(0.7)  # Ajusta el volumen de la música
+pygame.mixer.music.play(-1)  # Reproduce la música en bucle
+
+
 corazon_img = pygame.image.load('Imagenes/Jugador/corazon.png')
 fondo = pygame.image.load("Imagenes/Auxiliares/setting_image.png")
 laser_sonido = pygame.mixer.Sound("Sonidos/Efectos de sonido/laser.mp3")
