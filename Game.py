@@ -620,9 +620,9 @@ def Game(Player1, Player2):
                 current_player.escudo -= 2
             elif current_player.escudo == 1:
                 current_player.escudo == 0
-                current_player.vida -= 50
+                current_player.vida -= 99999
             else:
-                current_player.vida -= 50
+                current_player.vida -= 99999
             golpe_sonido.play()
 
         # Colicion entre jugador y nave enemiga
