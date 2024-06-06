@@ -82,6 +82,7 @@ current_player = None
 
 # Nivel actual
 nivel = 1
+nivel_maximo = 3
 turno = True
 primera = True
 patron_actual = None
@@ -314,9 +315,17 @@ class Jugador(pygame.sprite.Sprite):
         frame.blit(aura, aura_rect.topleft)
 
 class Enemigos(pygame.sprite.Sprite):
+    global nivel
     def __init__(self, x, y):
         super().__init__()
-        self.image = pygame.image.load("Imagenes/Enemigos/enemigo.png").convert_alpha()
+        if nivel == 1:
+            self.image = pygame.image.load("Imagenes/Enemigos/enemigo.png").convert_alpha()
+        elif nivel == 2:
+            self.image = pygame.image.load("Imagenes/Enemigos/enemigo2.png").convert_alpha()
+        elif nivel >= 3:
+            self.image = pygame.image.load("Imagenes/Enemigos/enemigo3.png").convert_alpha()
+
+        self.image = pygame.transform.scale(self.image, (100, 75))
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
@@ -405,9 +414,6 @@ grupo_balas_enemigos = pygame.sprite.Group()
 grupo_balas_cargadas_enemigos = pygame.sprite.Group()
 grupo_powerups = pygame.sprite.Group()
 
-def reiniciar_enemigos():
-    grupo_enemigos.empty()
-
 def cambiar_nivel():
     global nivel, patron_actual, posiciones_enemigos, image_indices, power_up_images, window, grupo_enemigos, grupo_jugador
 
@@ -432,7 +438,7 @@ def cambiar_nivel():
 
 # Ciclo del juego
 def Game(Player1, Player2):
-    global bonus_vidas, bonus_puntos, bonus_escudo, current_player, nivel, patron_actual, posiciones_enemigos, power_up_puntos_activo, window, pausado, primera, turno
+    global bonus_vidas, bonus_puntos, bonus_escudo, current_player, nivel, patron_actual, posiciones_enemigos, power_up_puntos_activo, window, pausado, primera, turno, nivel_maximo
     pygame.init()
     window = pygame.display.set_mode((largo, alto), pygame.RESIZABLE)
 
@@ -620,9 +626,9 @@ def Game(Player1, Player2):
             current_player.vida = 50
             primera = False
             grupo_jugador.add(current_player)
-            reiniciar_enemigos()
+            cambiar_nivel()
         
-        if nivel > 3:
+        if nivel > nivel_maximo:
             pygame.time.delay(5000)
             play = False
 
