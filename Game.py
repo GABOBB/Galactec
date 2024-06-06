@@ -82,7 +82,10 @@ current_player = None
 
 # Nivel actual
 nivel = 1
+turno = None
+primera = True
 patron_actual = None
+enemigos_muertos = 0
 posiciones_enemigos = None
 
 # Pausar juego
@@ -93,6 +96,32 @@ def texto_puntuacion(frame, text, size, x, y):
     text_frame = font.render(text, True, BLANCO, NEGRO)
     text_rect = text_frame.get_rect()
     text_rect.midtop = (x, y)
+    frame.blit(text_frame, text_rect)
+
+def texto_nivel(frame, nivel, x, y):
+    font = pygame.font.SysFont("Small Fonts", 36, bold=True)
+    if nivel < 4:
+        text_frame = font.render(f"Nivel: {nivel}", True, BLANCO, NEGRO)
+    else:
+        text_frame = font.render("Gracias por jugar", True, BLANCO, NEGRO)
+    text_rect = text_frame.get_rect()
+    text_rect.midtop = (x, y)
+    frame.blit(text_frame, text_rect)
+
+def texto_turno(frame, jugador1, jugador2, jugador0):
+    global primera, turno
+    font = pygame.font.SysFont("Small Fonts", 36, bold=True)
+
+    if primera:
+        if jugador0 == jugador1:
+            turno = not turno
+        text_frame = font.render(f"El jugador {jugador0} iniciará la partida", True, BLANCO, NEGRO)
+    elif turno:
+        text_frame = font.render(f"Turno de: {jugador1}", True, BLANCO, NEGRO)
+    else:
+        text_frame = font.render(f"Turno de: {jugador2}", True, BLANCO, NEGRO)
+    text_rect = text_frame.get_rect()
+    text_rect.midtop = (largo//4, 50)
     frame.blit(text_frame, text_rect)
 
 def barra_vida(frame, x, y, nivel):
@@ -389,11 +418,11 @@ def cambiar_nivel():
     elif nivel == 2:
         posiciones_enemigos = patron_onda(20)
     elif nivel == 3:
-        posiciones_enemigos = patron_lluvia(20)
+        posiciones_enemigos = patron_linea_recta(20)
     elif nivel == 4:
         posiciones_enemigos = patron_espiral(20)
     elif nivel == 5:
-        posiciones_enemigos = patron_linea_recta(20)
+        posiciones_enemigos = patron_lluvia(20)
 
     for pos in posiciones_enemigos:
         enemigo = Enemigos(pos[0], pos[1])
@@ -402,7 +431,7 @@ def cambiar_nivel():
 
 # Ciclo del juego
 def Game(Player1, Player2):
-    global bonus_vidas, bonus_puntos, bonus_escudo, current_player, nivel, patron_actual, posiciones_enemigos, power_up_puntos_activo, window, pausado
+    global bonus_vidas, bonus_puntos, bonus_escudo, current_player, nivel, patron_actual, posiciones_enemigos, power_up_puntos_activo, window, pausado, primera, turno
     pygame.init()
     window = pygame.display.set_mode((largo, alto), pygame.RESIZABLE)
 
@@ -415,7 +444,7 @@ def Game(Player1, Player2):
     pygame.display.set_icon(nave_image)
 
     players = (Jugador(Player1[0], Player1[1], Player1[2]), Jugador(Player2[0], Player2[1], Player2[2]))
-    current_player = players[0]
+    current_player = random.choice(players)
 
     cambiar_nivel()
 
@@ -453,6 +482,9 @@ def Game(Player1, Player2):
 
             if len(enemigos_que_han_disparado) == len(grupo_enemigos):
                 enemigos_que_han_disparado = []
+
+            if len(enemigos_que_han_disparado_potenciado) == len(grupo_enemigos):
+                enemigos_que_han_disparado_potenciado = []
 
             for enemigo in grupo_enemigos:
                 enemigo.mover()
@@ -581,18 +613,24 @@ def Game(Player1, Player2):
                 current_player = players[1]
             else:
                 current_player = players[0]
-            current_player.vida = 50
             current_player.rect.centerx = largo // 2
             current_player.rect.centery = alto - 50
-
+            current_player.vida = 50
+            turno = not turno
+            primera = False
             reiniciar_enemigos()
+        
+        if nivel > 3:
+            pygame.time.delay(5000)
+            play = False
 
-        if len(grupo_enemigos) == 0:
+        elif len(grupo_enemigos) == 0:
             nivel += 1
             cambiar_nivel()
             current_player.reiniciar()
             current_player = players[1]
             grupo_jugador.add(current_player)
+            
 
         # Colicion entre balas y enemigos
         colicion1 = pygame.sprite.groupcollide(grupo_enemigos, grupo_balas_jugador, True, True)
@@ -620,9 +658,9 @@ def Game(Player1, Player2):
                 current_player.escudo -= 2
             elif current_player.escudo == 1:
                 current_player.escudo == 0
-                current_player.vida -= 50
+                current_player.vida -= 99999
             else:
-                current_player.vida -= 50
+                current_player.vida -= 99999
             golpe_sonido.play()
 
         # Colicion entre jugador y nave enemiga
@@ -649,6 +687,8 @@ def Game(Player1, Player2):
 
         texto_puntuacion(window, ("SCORE: " + str(score) + " "), 30, largo - 85, 2)
         barra_vida(window, largo - 285, 0, current_player.vida)
+        texto_nivel(window, nivel, largo//2 , 2)
+        texto_turno(window, players[0].name, players[1].name, current_player.name)
 
         if players[1] != None:
             perfiles_jugadores(window, players[0].name, players[0].profile_image, players[1].name,
