@@ -39,6 +39,7 @@ corazon_img = pygame.image.load('Imagenes/Jugador/corazon.png')
 fondo = pygame.image.load("Imagenes/Auxiliares/setting_image.png")
 laser_sonido = pygame.mixer.Sound("Sonidos/Efectos de sonido/laser.mp3")
 laser_sonido_2 = pygame.mixer.Sound("Sonidos/Efectos de sonido/Laser_2.wav")
+laser_sonido_3 = pygame.mixer.Sound("Sonidos/Efectos de sonido/Laser_3.mp3")
 explosion_sonido = pygame.mixer.Sound("Sonidos/Efectos de sonido/Explosion.wav")
 golpe_sonido = pygame.mixer.Sound("Sonidos/Efectos de sonido/Golpe.wav")
 propulsores_sonido = pygame.mixer.Sound("Sonidos/Efectos de sonido/Propulsores de nave.mp3")
@@ -289,6 +290,7 @@ class Enemigos(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.shoot = False
+        self.power_shot = False
         self.last_powered_shot_time = 0  # Temporizador para el disparo potenciado
 
     def mover(self):
@@ -310,8 +312,8 @@ class Enemigos(pygame.sprite.Sprite):
     def disparo_potenciado(self):
         bala_potenciada = DisparoPotenciado(self.rect.centerx, self.rect.bottom)
         grupo_jugador.add(bala_potenciada)
-        grupo_balas_enemigos.add(bala_potenciada)
-        laser_sonido_2.play()
+        grupo_balas_cargadas_enemigos.add(bala_potenciada)
+        laser_sonido_3.play()
 
 class Balas(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -336,7 +338,7 @@ class Balas_enemigos(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.y += 25
-        if self.rect.bottom > alto:
+        if self.rect.y > alto:
             self.kill()
 
 class DisparoPotenciado(pygame.sprite.Sprite):
@@ -348,8 +350,8 @@ class DisparoPotenciado(pygame.sprite.Sprite):
         self.rect.y = y
 
     def update(self):
-        self.rect.y += 15
-        if self.rect.bottom > alto:
+        self.rect.y += 25
+        if self.rect.y > alto:
             self.kill()
 
 class PowerUp(pygame.sprite.Sprite):
@@ -369,6 +371,7 @@ grupo_jugador = pygame.sprite.Group()
 grupo_enemigos = pygame.sprite.Group()
 grupo_balas_jugador = pygame.sprite.Group()
 grupo_balas_enemigos = pygame.sprite.Group()
+grupo_balas_cargadas_enemigos = pygame.sprite.Group()
 grupo_powerups = pygame.sprite.Group()
 
 def reiniciar_enemigos():
@@ -433,6 +436,7 @@ def Game(Player1, Player2):
 
     # Lista de enemigos que han disparado el disparo potenciado
     enemigos_que_han_disparado_potenciado = []
+    last_power_shot_time = 0
 
     while play:
         clock.tick(fps)
@@ -464,14 +468,13 @@ def Game(Player1, Player2):
                     last_shot_time = current_time  # Actualizar el tiempo del último disparo
 
             # Disparo potenciado cada 5 segundos, asegurando que una sola nave lo haga a la vez
-            if len(enemigos_que_han_disparado_potenciado) == len(grupo_enemigos):
-                enemigos_que_han_disparado_potenciado = []
-
-            for enemigo in grupo_enemigos:
-                if current_time - enemigo.last_powered_shot_time >= 5 and enemigo not in enemigos_que_han_disparado_potenciado:
-                    enemigo.disparo_potenciado()
-                    enemigos_que_han_disparado_potenciado.append(enemigo)
-                    enemigo.last_powered_shot_time = current_time
+            if grupo_enemigos and (current_time - last_power_shot_time >= 5):  # Solo permitir disparar si han pasado 5 segundos
+                enemigo_disparo = random.choice([e for e in grupo_enemigos if e not in enemigos_que_han_disparado_potenciado])
+                if not enemigo_disparo.shoot:
+                    enemigo_disparo.disparo_potenciado()
+                    enemigo_disparo.power_shot = True
+                    enemigos_que_han_disparado_potenciado.append(enemigo_disparo)
+                    last_power_shot_time = current_time  # Actualizar el tiempo del último disparo
 
         window.fill(NEGRO)
         for coord in coord_list:
@@ -529,6 +532,7 @@ def Game(Player1, Player2):
             grupo_enemigos.update()
             grupo_balas_jugador.update()
             grupo_balas_enemigos.update()
+            grupo_balas_cargadas_enemigos.update()
             grupo_powerups.update()
 
             if current_time - last_power_up_time >= power_up_interval and image_indices:
@@ -543,6 +547,7 @@ def Game(Player1, Player2):
         grupo_enemigos.draw(window)
         grupo_balas_jugador.draw(window)
         grupo_balas_enemigos.draw(window)
+        grupo_balas_cargadas_enemigos.draw(window)
         grupo_powerups.draw(window)
 
         window.blit(marco_poderes, [largo - 207, alto - 60])
@@ -589,11 +594,13 @@ def Game(Player1, Player2):
             current_player = players[1]
             grupo_jugador.add(current_player)
 
+        # Colicion entre balas y enemigos
         colicion1 = pygame.sprite.groupcollide(grupo_enemigos, grupo_balas_jugador, True, True)
         for i in colicion1:
-            score += 10 * score_multiplier
+            score += 200 * score_multiplier
             explosion_sonido.play()
 
+        # Colicion entre jugador y balas enemigos
         colicion2 = pygame.sprite.spritecollide(current_player, grupo_balas_enemigos, True)
         for j in colicion2:
             if control_conectado:
@@ -603,18 +610,34 @@ def Game(Player1, Player2):
             else:
                 current_player.vida -= 10
             golpe_sonido.play()
+            
+        # Colicion entre jugador y balas cargadas enemigos
+        colicion3 = pygame.sprite.spritecollide(current_player, grupo_balas_cargadas_enemigos, True)
+        for j in colicion3:
+            if control_conectado:
+                controller.rumble(1, 1, 300)
+            if current_player.escudo > 1:
+                current_player.escudo -= 2
+            elif current_player.escudo == 1:
+                current_player.escudo == 0
+                current_player.vida -= 50
+            else:
+                current_player.vida -= 50
+            golpe_sonido.play()
 
+        # Colicion entre jugador y nave enemiga
         hits = pygame.sprite.spritecollide(current_player, grupo_enemigos, False)
         for hit in hits:
             if control_conectado:
                 controller.rumble(1, 1, 300)
             if current_player.escudo > 0:
                 current_player.escudo -= 1
-                score += 10 * score_multiplier
+                score += 200 * score_multiplier
             else:
                 current_player.vida -= 50
-                score += 10 * score_multiplier
+                score += 200 * score_multiplier
 
+        # Colicion entre jugador y power ups
         power_up_hits = pygame.sprite.spritecollide(current_player, grupo_powerups, True)
         for power_up_hit in power_up_hits:
             if power_up_hit.image == bonus_vida_image:
