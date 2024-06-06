@@ -453,6 +453,9 @@ def Game(Player1, Player2):
 
             if len(enemigos_que_han_disparado) == len(grupo_enemigos):
                 enemigos_que_han_disparado = []
+                
+            if len(enemigos_que_han_disparado_potenciado) == len(grupo_enemigos):
+                enemigos_que_han_disparado_potenciado = []
 
             for enemigo in grupo_enemigos:
                 enemigo.mover()
